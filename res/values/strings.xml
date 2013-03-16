@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">天天打车—司机</string>
+    <string name="hint">请按住下方按钮，说出上车时间+上车地点+目的地 </string>
+    <string name="hint1">如：现在（20分钟后）我要从中关村去上地怡美家园</string>
+    <string name="title">天天打车</string>
+    <string name="item">已阅读并同意注册条款</string>
+
+</resources>

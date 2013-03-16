@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="dialog" parent="@android:style/Theme.Dialog">
+		<item name="android:windowFrame">@null</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:background">@android:color/transparent</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<!-- <item name="android:backgroundDimAmount">0.6</item> -->
+	</style>
+
+	<!-- row 竖线 -->
+	<style name="view_row_port">
+		<item name="android:layout_width">2dip</item>
+		<item name="android:background">#f09505</item>
+		<item name="android:layout_height">fill_parent</item>
+	</style>
+
+	<!-- row 竖线 -->
+	<style name="left_row_port">
+		<item name="android:layout_width">2dip</item>
+		<item name="android:background">#ffac2a</item>
+		<item name="android:layout_height">fill_parent</item>
+
+	</style>
+	<!-- row 竖线 -->
+	<style name="right_row_port">
+		<item name="android:layout_width">1dip</item>
+		<item name="android:src">#A9A9A9</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_alignParentRight">true</item>
+	</style>
+	<!-- row 横线 -->
+	<style name="view_row_land_line">
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:background">#A9A9A9</item>
+		<item name="android:layout_height">1dip</item>
+	</style>
+
+	<style name="tab_textview_normal">
+		<item name="android:textSize">20sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">#ff000000</item>
+	</style>
+
+	<style name="green_internet_tab">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">#ff000000</item>
+		<item name="android:ellipsize">marquee</item>
+		<item name="android:gravity">center</item>
+		<item name="android:paddingTop">3dip</item>
+		<item name="android:paddingBottom">3dip</item>
+		<item name="android:layout_width">fill_parent</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:button">@null</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:layout_weight">1.0</item>
+	</style>
+
+	<drawable name="list_divider">#A9A9A9</drawable>
+	<drawable name="list_item_bg">#300010ff</drawable>
+
+</resources>

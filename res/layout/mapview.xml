@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/my_relative_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:id="@+id/head"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="@color/gray" >
+
+        <Button
+            android:id="@+id/locate"
+            android:layout_width="80dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/locate_n" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@+id/list"
+            android:layout_toRightOf="@+id/locate"
+            android:background="@drawable/title"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="天天打车"
+            android:textColor="@color/black"
+            android:textSize="22dp" />
+
+        <Button
+            android:id="@+id/list"
+            android:layout_width="80dp"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/list" />
+    </RelativeLayout>
+
+    <com.baidu.mapapi.MapView
+        android:id="@+id/bmapView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/head"
+        android:clickable="true" />
+
+    <!-- <RelativeLayout -->
+    <!-- android:id="@+id/layout1" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="40dp" -->
+    <!-- android:layout_above="@+id/bottom" -->
+    <!-- android:layout_marginBottom="15dp" -->
+    <!-- android:layout_marginLeft="15dp" -->
+    <!-- android:layout_marginRight="15dp" -->
+    <!-- android:background="@color/white" -->
+    <!-- android:visibility="gone" > -->
+    <!--  -->
+    <!-- <LinearLayout -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="fill_parent" -->
+    <!-- android:weightSum="2" > -->
+    <!--  -->
+    <!-- <TextView -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_weight="1" -->
+    <!-- android:gravity="center_vertical" -->
+    <!-- android:text="中关村南大街5号" /> -->
+    <!--  -->
+    <!-- <LinearLayout -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_weight="1" -->
+    <!-- android:weightSum="10" > -->
+    <!--  -->
+    <!-- <TextView -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_weight="9" -->
+    <!-- android:gravity="center_vertical" -->
+    <!-- android:text="中央美术学院" /> -->
+    <!--  -->
+    <!-- <Button -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_gravity="right" -->
+    <!-- android:layout_weight="1" /> -->
+    <!-- </LinearLayout> -->
+    <!-- </LinearLayout> -->
+    <!-- </RelativeLayout> -->
+
+
+    <!-- <RelativeLayout -->
+    <!-- android:id="@+id/bottom" -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="40dp" -->
+    <!-- android:layout_above="@+id/bottom_button" -->
+    <!-- android:layout_marginBottom="15dp" -->
+    <!-- android:layout_marginLeft="15dp" -->
+    <!-- android:layout_marginRight="15dp" -->
+    <!-- android:background="@color/white" -->
+    <!-- android:visibility="gone" > -->
+    <!--  -->
+    <!-- <LinearLayout -->
+    <!-- android:layout_width="fill_parent" -->
+    <!-- android:layout_height="fill_parent" -->
+    <!-- android:weightSum="2" > -->
+    <!--  -->
+    <!-- <TextView -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_weight="1" -->
+    <!-- android:gravity="center_vertical" -->
+    <!-- android:text="中关村南大街5号" /> -->
+    <!--  -->
+    <!-- <LinearLayout -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_weight="1" -->
+    <!-- android:weightSum="10" > -->
+    <!--  -->
+    <!-- <TextView -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="match_parent" -->
+    <!-- android:layout_weight="9" -->
+    <!-- android:gravity="center_vertical" -->
+    <!-- android:text="中央美术学院" /> -->
+    <!--  -->
+    <!-- <Button -->
+    <!-- android:layout_width="wrap_content" -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_gravity="right" -->
+    <!-- android:layout_weight="1" /> -->
+    <!-- </LinearLayout> -->
+    <!-- </LinearLayout> -->
+    <!-- </RelativeLayout> -->
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/bottom_button"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@color/white"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:weightSum="2" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#ff9e05" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:src="@drawable/head" />
+
+                    <TextView
+                        android:id="@+id/start"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:gravity="center_vertical"
+                        android:text="中央"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#ff9e05"
+                    android:weightSum="10" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:src="@drawable/banner" />
+
+                    <TextView
+                        android:id="@+id/end"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:id="@+id/line1"
+                        style="@style/view_row_port"
+                        android:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/line2"
+                        style="@style/left_row_port"
+                        android:visibility="visible" />
+
+                    <Button
+                        android:id="@+id/answer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:layout_weight="1"
+                        android:background="#ff9e05"
+                        android:text="应答"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_instruction"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/button_frame"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/cancel" />
+
+            <Button
+                android:id="@+id/call"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="1"
+                android:background="@drawable/call" />
+
+            <Button
+                android:id="@+id/finish"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/oncar" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
