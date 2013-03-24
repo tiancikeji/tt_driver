@@ -38,103 +38,12 @@
             android:background="@drawable/list" />
     </RelativeLayout>
 
-    <com.baidu.mapapi.MapView
+    <com.baidu.mapapi.map.MapView
         android:id="@+id/bmapView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/head"
         android:clickable="true" />
-
-    <!-- <RelativeLayout -->
-    <!-- android:id="@+id/layout1" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="40dp" -->
-    <!-- android:layout_above="@+id/bottom" -->
-    <!-- android:layout_marginBottom="15dp" -->
-    <!-- android:layout_marginLeft="15dp" -->
-    <!-- android:layout_marginRight="15dp" -->
-    <!-- android:background="@color/white" -->
-    <!-- android:visibility="gone" > -->
-    <!--  -->
-    <!-- <LinearLayout -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" -->
-    <!-- android:weightSum="2" > -->
-    <!--  -->
-    <!-- <TextView -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:layout_weight="1" -->
-    <!-- android:gravity="center_vertical" -->
-    <!-- android:text="中关村南大街5号" /> -->
-    <!--  -->
-    <!-- <LinearLayout -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="wrap_content" -->
-    <!-- android:layout_weight="1" -->
-    <!-- android:weightSum="10" > -->
-    <!--  -->
-    <!-- <TextView -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:layout_weight="9" -->
-    <!-- android:gravity="center_vertical" -->
-    <!-- android:text="中央美术学院" /> -->
-    <!--  -->
-    <!-- <Button -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="wrap_content" -->
-    <!-- android:layout_gravity="right" -->
-    <!-- android:layout_weight="1" /> -->
-    <!-- </LinearLayout> -->
-    <!-- </LinearLayout> -->
-    <!-- </RelativeLayout> -->
-
-
-    <!-- <RelativeLayout -->
-    <!-- android:id="@+id/bottom" -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="40dp" -->
-    <!-- android:layout_above="@+id/bottom_button" -->
-    <!-- android:layout_marginBottom="15dp" -->
-    <!-- android:layout_marginLeft="15dp" -->
-    <!-- android:layout_marginRight="15dp" -->
-    <!-- android:background="@color/white" -->
-    <!-- android:visibility="gone" > -->
-    <!--  -->
-    <!-- <LinearLayout -->
-    <!-- android:layout_width="fill_parent" -->
-    <!-- android:layout_height="fill_parent" -->
-    <!-- android:weightSum="2" > -->
-    <!--  -->
-    <!-- <TextView -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:layout_weight="1" -->
-    <!-- android:gravity="center_vertical" -->
-    <!-- android:text="中关村南大街5号" /> -->
-    <!--  -->
-    <!-- <LinearLayout -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="wrap_content" -->
-    <!-- android:layout_weight="1" -->
-    <!-- android:weightSum="10" > -->
-    <!--  -->
-    <!-- <TextView -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="match_parent" -->
-    <!-- android:layout_weight="9" -->
-    <!-- android:gravity="center_vertical" -->
-    <!-- android:text="中央美术学院" /> -->
-    <!--  -->
-    <!-- <Button -->
-    <!-- android:layout_width="wrap_content" -->
-    <!-- android:layout_height="wrap_content" -->
-    <!-- android:layout_gravity="right" -->
-    <!-- android:layout_weight="1" /> -->
-    <!-- </LinearLayout> -->
-    <!-- </LinearLayout> -->
-    <!-- </RelativeLayout> -->
 
     <LinearLayout
         android:layout_width="fill_parent"

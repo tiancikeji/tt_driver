@@ -67,7 +67,8 @@ public class LandActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.land);
 
 		initView();
-
+		// ==========测试=========
+		startMainActivity();
 	}
 
 	/**

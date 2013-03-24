@@ -40,6 +40,9 @@ public class PassengerInfo {
 
 	}
 
+	public PassengerInfo() {
+	}
+
 	public int getOnline() {
 		return online;
 	}

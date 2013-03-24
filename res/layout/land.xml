@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white"
+    android:background="@drawable/bg"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_weight="1.5"
-            android:hint="请输入手机号码"
+            android:hint="请输入工号"
             android:inputType="phone"
             android:maxLength="11"
             android:paddingLeft="5dp" >
