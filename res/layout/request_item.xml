@@ -22,12 +22,11 @@
             android:src="@drawable/start" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textstart1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="中关村南大街5号"
             android:textColor="#FFFFFF"
             android:textSize="30dp" />
     </LinearLayout>
@@ -46,12 +45,11 @@
             android:src="@drawable/end" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/textend1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
-            android:text="清华大学"
             android:textColor="#FFFFFF"
             android:textSize="30dp" />
     </LinearLayout>
@@ -74,12 +72,11 @@
                 android:src="@drawable/money" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/textmoney1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="10"
                 android:textColor="#FFFFFF"
                 android:textSize="36dp"
                 android:textStyle="bold" />
@@ -110,12 +107,11 @@
                 android:src="@drawable/time" />
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/texttime1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"
-                android:text="46"
                 android:textColor="#FFFFFF"
                 android:textSize="36dp"
                 android:textStyle="bold" />

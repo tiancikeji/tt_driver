@@ -46,7 +46,7 @@ public class TripsInfo implements Serializable {
 		end_lng = jObject.optDouble("end_lng");
 
 		id = jObject.optInt("id");
-		appointment = jObject.optString("appointment");
+		appointment = jObject.optString("price");
 		updated_at = jObject.optString("updated_at");
 		created_at = jObject.optString("created_at");
 	}

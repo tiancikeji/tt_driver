@@ -2,8 +2,10 @@ package com.findcab.driver.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
+import android.widget.Toast;
+import com.iflytek.speech.SpeechError;
 import com.iflytek.speech.SynthesizerPlayer;
+import com.iflytek.speech.SynthesizerPlayerListener;
 import com.iflytek.ui.SynthesizerDialog;
 
 /**
@@ -12,11 +14,17 @@ import com.iflytek.ui.SynthesizerDialog;
  * @author iFlytek
  * @since 20120823
  */
-public class Plysounds {
+public class Plysounds implements SynthesizerPlayerListener{
 
 	// // 合成的文本
 	// private EditText mSourceText;
-
+	//弹出提示
+		private Toast mToast;
+		//缓冲进度
+		private int mPercentForBuffering = 0;
+		
+		//播放进度
+		private int mPercentForPlaying = 0;
 	// 缓存对象.
 	private SharedPreferences mSharedPreferences;
 
@@ -42,6 +50,9 @@ public class Plysounds {
 
 	public Plysounds(Context context) {
 		this.context = context;
+		mToast = Toast.makeText(context,
+				String.format(context.getResources().getString(R.string.tts_toast_format), 0, 0),
+				Toast.LENGTH_LONG);
 		init();
 	}
 
@@ -90,31 +101,34 @@ public class Plysounds {
 		mSynthesizerPlayer.replay();
 
 		// 设置合成发音人.
-		String role = mSharedPreferences.getString(context
-				.getString(R.string.preference_key_tts_role), context
-				.getString(R.string.preference_default_tts_role));
-		mSynthesizerPlayer.setVoiceName(role);
+//		String role = mSharedPreferences.getString(context
+//				.getString(R.string.preference_key_tts_role), context
+//				.getString(R.string.preference_default_tts_role));
+		mSynthesizerPlayer.setVoiceName("xiaoyu");
 
 		// 设置发音人语速
 		int speed = mSharedPreferences.getInt(context
-				.getString(R.string.preference_key_tts_speed), 50);
+				.getString(R.string.preference_key_tts_speed), 80);
 		mSynthesizerPlayer.setSpeed(speed);
 
 		// 设置音量.
-		int volume = mSharedPreferences.getInt(context
-				.getString(R.string.preference_key_tts_volume), 50);
-		mSynthesizerPlayer.setVolume(volume);
+//		int volume = mSharedPreferences.getInt(context
+//				.getString(R.string.preference_key_tts_volume), 50);
+//		mSynthesizerPlayer.setVolume(volume);
 
 		// 设置背景音.
-		String music = mSharedPreferences.getString(context
-				.getString(R.string.preference_key_tts_music), context
-				.getString(R.string.preference_default_tts_music));
-		mSynthesizerPlayer.setBackgroundSound(music);
+//		String music = mSharedPreferences.getString(context
+//				.getString(R.string.preference_key_tts_music), context
+//				.getString(R.string.preference_default_tts_music));
+//		mSynthesizerPlayer.setBackgroundSound(music);
 
 		// 进行语音合成.
 		if (content != null) {
-
-			mSynthesizerPlayer.playText(content, null, null);
+		
+			mSynthesizerPlayer.playText(content, null, this);
+			mToast.setText(String
+					.format(context.getResources().getString(R.string.tts_toast_format), 0, 0));
+			mToast.show();
 		}
 
 	}
@@ -158,5 +172,49 @@ public class Plysounds {
 
 		// 弹出合成Dialog
 		ttsDialog.show();
+	}
+
+	@Override
+	public void onBufferPercent(int percent,int beginPos,int endPos) {
+		// TODO Auto-generated method stub
+		mPercentForBuffering = percent;
+		mToast.setText(String.format(context.getResources().getString(R.string.tts_toast_format),
+				mPercentForBuffering, mPercentForPlaying));
+		mToast.show();
+		
+	}
+
+	@Override
+	public void onEnd(SpeechError arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayBegin() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayPaused() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+		@Override
+		public void onPlayPercent(int percent,int beginPos,int endPos) {
+			mPercentForPlaying = percent;
+			mToast.setText(String.format(context.getResources().getString(R.string.tts_toast_format),
+					mPercentForBuffering, mPercentForPlaying));
+			mToast.show();
+		}
+	
+
+	@Override
+	public void onPlayResumed() {
+		// TODO Auto-generated method stub
+		
 	}
 }

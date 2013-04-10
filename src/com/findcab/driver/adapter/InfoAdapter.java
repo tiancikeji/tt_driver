@@ -7,18 +7,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.findcab.driver.activity.R;
+import com.findcab.driver.object.ConversationInfo;
 import com.findcab.driver.object.PassengerInfo;
+import com.findcab.driver.object.TripsInfo;
 
 public class InfoAdapter extends BaseAdapter {
-	public List<PassengerInfo> list;
+//	public List<ConversationInfo> list;
+	public List<TripsInfo> list;
 	public int mResource = R.layout.request_item;
 	public LayoutInflater mInflater;
 
 	public Context mContext;
 
-	public InfoAdapter(Context context, List<PassengerInfo> list) {
+//	public InfoAdapter(Context context, List<ConversationInfo> list) {
+//		this.list = list;
+//		this.mContext = context;
+//		mInflater = (LayoutInflater) context
+//				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//	}
+	public InfoAdapter(Context context, List<TripsInfo> list) {
 		this.list = list;
 		this.mContext = context;
 		mInflater = (LayoutInflater) context
@@ -52,9 +63,22 @@ public class InfoAdapter extends BaseAdapter {
 		if (convertView == null) {
 
 			convertView = mInflater.inflate(mResource, null);
+		
+			
 		}
 
-		final PassengerInfo info = list.get(position);
+		final TripsInfo info = list.get(position);
+		TextView start =(TextView) convertView.findViewById(R.id.textstart1);
+		TextView end =(TextView) convertView.findViewById(R.id.textend1);
+		TextView money =(TextView) convertView.findViewById(R.id.textmoney1);
+		TextView time =(TextView) convertView.findViewById(R.id.texttime1);
+		start.setText(info.getStart());
+		end.setText(info.getEnd());
+		money.setText(info.getAppointment());
+		time.setText(info.getUpdated_at());
+//		start.setText("ggggg");
+//		end.setText("ffffff");
+		//money.setText(info.get);
 
 		return convertView;
 	}
@@ -64,7 +88,7 @@ public class InfoAdapter extends BaseAdapter {
 	 * 
 	 * @param enterpriseInfoList
 	 */
-	public void upDatas(List<PassengerInfo> contactsList) {
+	public void upDatas(List<TripsInfo> contactsList) {
 
 		list = contactsList;
 

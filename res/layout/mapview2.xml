@@ -18,11 +18,11 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:background="@drawable/bt_request"
-            android:text="3条新的打车请求"
+        
             android:textColor="#FFFFFF"
             android:textSize="18dp"
             android:visibility="visible" />
-
+<!--   android:text="3条新的打车请求"-->   
         <ListView
             android:id="@+id/listView"
             android:layout_width="370dp"
@@ -55,14 +55,15 @@
                     android:src="@drawable/start" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/textstart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="中关村南大街5号"
+                
                     android:textColor="#FFFFFF"
                     android:textSize="30dp" />
+                   <!--   android:text="中关村南大街5号"-->
             </LinearLayout>
 
             <LinearLayout
@@ -79,14 +80,15 @@
                     android:src="@drawable/end" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/textend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="清华大学"
+                
                     android:textColor="#FFFFFF"
                     android:textSize="30dp" />
+                <!--     android:text="清华大学" -->
             </LinearLayout>
 
             <LinearLayout
@@ -103,12 +105,11 @@
                     android:src="@drawable/money" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/textdistant"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="2.5"
                     android:textColor="#FFFFFF"
                     android:textSize="36dp"
                     android:textStyle="bold" />
@@ -139,12 +140,11 @@
                     android:src="@drawable/money" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/textmoney"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
-                    android:text="10"
                     android:textColor="#FFFFFF"
                     android:textSize="36dp"
                     android:textStyle="bold" />
@@ -177,7 +177,7 @@
                     android:src="@drawable/time" />
 
                 <TextView
-                    android:id="@+id/textView1"
+                    android:id="@+id/texttime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -210,7 +210,7 @@
                 android:text="应答"
                 android:textColor="#FFFFFF"
                 android:textSize="36dp"
-                android:visibility="visible" />
+                />
 
             <LinearLayout
                 android:id="@+id/linear_called"
@@ -223,6 +223,7 @@
                 android:visibility="gone" >
 
                 <Button
+                    android:id="@+id/linear_btcalled"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bt_call"
@@ -231,6 +232,7 @@
                     android:textSize="36dp" />
 
                 <Button
+                    android:id="@+id/linear_already"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"

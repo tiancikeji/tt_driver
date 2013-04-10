@@ -151,20 +151,19 @@ public class HttpTools {
 	public static boolean checkNetWork(final Context context) {
 		if (!isNetworkAvailable(context)) {
 
-			new AlertDialog.Builder(context).setIcon(
-					android.R.drawable.ic_dialog_alert).setTitle("网络连接错误")
-					.setMessage("请检查网络连接！").setPositiveButton("确定",
-							new OnClickListener() {
+			new AlertDialog.Builder(context)
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle("网络连接错误").setMessage("请检查网络连接！")
+					.setPositiveButton("确定", new OnClickListener() {
 
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO Auto-generated method stub
-									Intent netIntent = new Intent(
-											"android.settings.WIRELESS_SETTINGS");
-									context.startActivity(netIntent);
-								}
-							}).show();
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							Intent netIntent = new Intent(
+									"android.settings.WIRELESS_SETTINGS");
+							context.startActivity(netIntent);
+						}
+					}).show();
 			return false;
 		}
 		return true;
@@ -312,11 +311,76 @@ public class HttpTools {
 		return null;
 	}
 
+//	public static Object postAndParse(String url, String data,
+//			Ihandler ihandler) {
+//		responseStatus = 0; // 1代表正常 2代表其它错误 2代表服务端相应错误，3代表解析错误
+//		ArrayList<BasicNameValuePair> postData = new ArrayList<BasicNameValuePair>();
+//		if (data != null) {
+//			for (Map.Entry<String, String> m : data.entrySet()) {
+//				postData.add(new BasicNameValuePair(m.getKey(), m.getValue()));
+//			}
+//		}
+//		System.out.println("-------url------" + url);
+//		HttpPost httpPost = new HttpPost(url);
+//		BasicHttpParams httpParams = new BasicHttpParams();
+//		HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
+//		HttpConnectionParams.setSoTimeout(httpParams, 10000);
+//		DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+//		HttpResponse response = null;
+//
+//		try {
+//			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postData,
+//					HTTP.UTF_8);
+//			httpPost.setEntity(entity);
+//			response = httpClient.execute(httpPost);
+//
+//			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+//				responseStatus = 1;
+//			} else {
+//				responseStatus = 2;
+//				httpPost.abort();
+//			}
+//		} catch (Exception e) {
+//			if (e.getMessage() != null)
+//				Log.e("HttpTools", e.getMessage());
+//			responseStatus = 2;
+//
+//			return null;
+//		}
+//
+//		// 响应正常
+//		if (responseStatus != 2) {
+//			try {
+//				HttpEntity httpEntity = response.getEntity();
+//				InputStream ins = httpEntity.getContent();
+//				Object resultMessage = ihandler.parseResponse(ins);
+//				return resultMessage;
+//			} catch (Exception e) {
+//				Log.e("HttpTools", e.getMessage());
+//				responseStatus = 3;
+//				return null;
+//			}
+//		}
+//
+//		return null;
+//	}
+//	
+//	
+	
 	public static Object getAndParse(String url, Map<String, String> data,
 			Ihandler ihandler) {
+
+		List<NameValuePair> list = new ArrayList<NameValuePair>();
 		if (data != null) {
-			url = buildGetMethod(url, data).build().toString();
+
+			NameValuePair pair;
+			for (Map.Entry<String, String> m : data.entrySet()) {
+				pair = new BasicNameValuePair(m.getKey(), m.getValue());
+				list.add(pair);
+			}
+
 		}
+		url += list.toString();
 		System.out.println("------url url----------" + url);
 		int status = 0;
 		String jsonStr = null;
@@ -329,12 +393,56 @@ public class HttpTools {
 
 			HttpClient httpclient = new DefaultHttpClient(httpParameters);
 			HttpResponse httpResponse = httpclient.execute(httpRequest);
-
 			status = httpResponse.getStatusLine().getStatusCode();
 
 			if (status == HttpStatus.SC_OK) {
 
 				HttpEntity httpEntity = httpResponse.getEntity();
+				// HttpEntity httpEntity = new UrlEncodedFormEntity(list,
+				// HTTP.UTF_8);//
+				InputStream ins = httpEntity.getContent();
+				Object resultMessage = ihandler.parseResponse(ins);
+				return resultMessage;
+				// jsonStr = EntityUtils.toString(httpResponse.getEntity(),
+				// "UTF-8");
+				// System.out.println("jsonStr================>" + jsonStr);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out
+					.println("==============connection wifi fail,e.printStackTrace() : "
+							+ e.getMessage());
+			return null;
+		}
+		return null;
+	}
+
+	
+	public static Object getAndParse(String url,  String data,
+			Ihandler ihandler) {
+
+		
+		url += data;
+		System.out.println("------url url----------" + url);
+		int status = 0;
+		String jsonStr = null;
+		HttpGet httpRequest = new HttpGet(url);
+		try {
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+			HttpConnectionParams.setTcpNoDelay(httpParameters, true);
+
+			HttpClient httpclient = new DefaultHttpClient(httpParameters);
+			HttpResponse httpResponse = httpclient.execute(httpRequest);
+			status = httpResponse.getStatusLine().getStatusCode();
+
+			if (status == HttpStatus.SC_OK) {
+
+				HttpEntity httpEntity = httpResponse.getEntity();
+				// HttpEntity httpEntity = new UrlEncodedFormEntity(list,
+				// HTTP.UTF_8);//
 				InputStream ins = httpEntity.getContent();
 				Object resultMessage = ihandler.parseResponse(ins);
 				return resultMessage;

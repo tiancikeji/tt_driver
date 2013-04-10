@@ -1,5 +1,7 @@
 package com.findcab.driver.activity;
 
+import com.findcab.driver.util.MyLogTools;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +14,9 @@ import android.widget.RelativeLayout;
 
 public class WelcomActivity extends Activity {
 	RelativeLayout welcom_layout;
-
+//	SharedPreferences sharedata = getSharedPreferences("data", 0);
+	String name ;
+	String password ;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -31,9 +35,13 @@ public class WelcomActivity extends Activity {
 			public void run() {
 				Intent mainIntent = null;
 				if (isSignup()) {
+					Bundle mBundle = new Bundle();
+					mBundle.putString("name", name);
+					mBundle.putString("password", password);
 
 					mainIntent = new Intent(WelcomActivity.this,
 							LocationOverlay.class);
+				mainIntent.putExtras(mBundle);
 				} else {
 
 					mainIntent = new Intent(WelcomActivity.this,
@@ -51,8 +59,9 @@ public class WelcomActivity extends Activity {
 	 */
 	private boolean isSignup() {
 		SharedPreferences sharedata = getSharedPreferences("data", 0);
-		String name = sharedata.getString("name", "");
-		String password = sharedata.getString("password", "");
+	
+		 name = sharedata.getString("name", "");
+		 password = sharedata.getString("password", "");
 		if (!name.equals("") && !password.equals("")) {
 			return true;
 		}

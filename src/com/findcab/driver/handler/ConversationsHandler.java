@@ -1,5 +1,8 @@
 package com.findcab.driver.handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,37 +24,57 @@ public class ConversationsHandler extends AbsHandler {
 	public ConversationsHandler(int index) {
 		this.index = index;
 	}
+	public ConversationsHandler() {
+		
+	}
 
 	@Override
 	public Object parseResponse(String responseStr) {
 		// TODO Auto-generated method stub
 
-		ConversationInfo lastConversation = null;
+		ConversationInfo info = null;
+
+		List<ConversationInfo> list = new ArrayList<ConversationInfo>();
 		try {
 			JSONObject object = new JSONObject(responseStr);
 			JSONArray array = object.getJSONArray("conversations");
 
 			// 得到最最近一次会话
 
-			if (index == -1) {
-				index = array.length() - 1;
-				lastConversation = new ConversationInfo(array
-						.getJSONObject(index));
-				lastConversation.setIndex(index);
-			} else {
+			 for (int i = 0; i < array.length(); i++) {
+			
+			 JSONObject oJsonObject = array.getJSONObject(i);
+			
+			 info = new ConversationInfo(oJsonObject);
+			
+			 if (oJsonObject.getInt("status") == 0) {
+			 list.add(info);
+			 }
+			 }
+			
+			
+			
+			
+			
 
-				lastConversation = new ConversationInfo(array
-						.getJSONObject(index));
-				lastConversation.setIndex(index);
-
-			}
+//			if (index == -1) {
+//				index = array.length() - 1;
+//				info = new ConversationInfo(array.getJSONObject(index));
+//				info.setIndex(index);
+//			} else {
+//
+//				info = new ConversationInfo(array.getJSONObject(index));
+//				info.setIndex(index);
+//
+//			}
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		// 司机应答
 
-		return lastConversation;
+		//return info;
+		return list;
 
 	}
 }
