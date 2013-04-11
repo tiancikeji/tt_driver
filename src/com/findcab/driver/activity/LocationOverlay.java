@@ -7,15 +7,19 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.integer;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -23,6 +27,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -54,7 +59,9 @@ import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.mapapi.map.PopupClickListener;
 import com.baidu.mapapi.map.PopupOverlay;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
+import com.findcab.driver.adapter.AppointAdapter;
 import com.findcab.driver.adapter.InfoAdapter;
+import com.findcab.driver.handler.AbsHandler;
 import com.findcab.driver.handler.BaseHandler;
 import com.findcab.driver.handler.ConversationsHandler;
 import com.findcab.driver.handler.PassengersHandler;
@@ -132,7 +139,7 @@ BDLocationListener,SynthesizerPlayerListener {
 	private LinearLayout linear_left;
 	private LinearLayout line1, line2;
 
-	private Button linear_call, linear_already,finish;
+	private Button linear_call, linear_already,finish,btn_call;
 	//	private Button locate;
 	private String androidDevice;
 	List<ConversationInfo> list = new ArrayList<ConversationInfo>();
@@ -144,9 +151,24 @@ BDLocationListener,SynthesizerPlayerListener {
 	private String name;
 	private String password;
 	protected String error;
-
-	private Button btn_call;
-
+	private boolean isStartCount = true,isWaiting =false ;// 控制是否启动倒数线程。只启动一次线程就好的
+	private final int WAITING = 60;
+	private int waitingTime = WAITING;
+	
+	//我的订单控件
+	private LinearLayout linearlayout_myorders;
+	private ListView listview_myorders;
+	//导航栏
+	private LinearLayout linear_nav;
+	private Button linear_nav_main,linear_nav_oppointment,linear_nav_order,linear_nav_set;
+	
+	//预约界面
+	private LinearLayout linear_oppointment;
+	private Button linear_oppointment_all,linear_oppointment_today,linear_oppointment_tommorrow,linear_oppointment_long,linear_oppointment_near;
+	//预约listview
+	private LinearLayout linear_oppointment_right;
+	private ListView linear_oppointment_listview;
+	
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
@@ -155,6 +177,7 @@ BDLocationListener,SynthesizerPlayerListener {
 		name=bundle.getString("name");
 		password=bundle.getString("password");
 		tripsList =new ArrayList<TripsInfo>();
+
 
 		initManager();
 		setContentView(R.layout.mapview2);
@@ -201,32 +224,6 @@ BDLocationListener,SynthesizerPlayerListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		//		new Thread(new Runnable() {
-		//			@SuppressWarnings("unchecked")
-		//			public void run() {
-		//
-		//				while (true) {
-		//
-		////			if(tripsInfo.getEnd()!=null)
-		////			{
-		////				new Plysounds(context).synthetizeInSilence("你有一条从"
-		////						+ tripsInfo.getStart() + "到" + tripsInfo.getEnd() + "搭车请求！");
-		////			}
-		//						try {
-		//							Thread.sleep(60000);
-		//						} catch (InterruptedException e) {
-		//							// TODO Auto-generated catch block
-		//							e.printStackTrace();
-		//						}
-		//
-		//						count++;
-		//					} 
-		//				}
-		//
-		//			
-		//
-		//		}).start();
 	}
 
 
@@ -299,54 +296,6 @@ BDLocationListener,SynthesizerPlayerListener {
 
 	}
 
-	//	private void initView() {
-	//
-	//		mMapView = (MapView) findViewById(R.id.bmapView);
-	//
-	//		androidDevice = Tools.getDeviceId(context);
-	//
-	//		iZoom = mMapView.getZoomLevel();
-	//
-	//		answer = (Button) findViewById(R.id.answer);
-	//		answer.setOnClickListener(this);
-	//
-	//		bottom_button = (RelativeLayout) findViewById(R.id.bottom_button);
-	//
-	//		starTextView = (TextView) findViewById(R.id.start);
-	//		endTextView = (TextView) findViewById(R.id.end);
-	//
-	//		layout_instruction = (LinearLayout) findViewById(R.id.layout_instruction);
-	//		cancel = (Button) findViewById(R.id.cancel);
-	//		cancel.setOnClickListener(this);
-	//
-	//		call = (Button) findViewById(R.id.call);
-	//		call.setOnClickListener(this);
-	//
-	//		finish = (Button) findViewById(R.id.finish);
-	//		finish.setOnClickListener(this);
-	//
-	//		locate = (Button) findViewById(R.id.locate);
-	//		locate.setOnClickListener(this);
-	//
-	//		line1 = (LinearLayout) findViewById(R.id.line1);
-	//		line2 = (LinearLayout) findViewById(R.id.line2);
-	//
-	//		mMapView.setDoubleClickZooming(false);
-	//		mMapView.setClickable(false);
-	//		mapController = mMapView.getController();
-	//		mapController.setZoom(14);
-	//		mLocClient = new LocationClient(this);
-	//		LocationClientOption option = new LocationClientOption();
-	//		option.setOpenGps(true);// 打开gps
-	//		option.setCoorType("bd09ll"); // 设置坐标类型
-	//		mLocClient.setLocOption(option);
-	//		mLocClient.registerLocationListener(this);
-	//		mLocClient.start();
-	//
-	//		getData();
-	//
-	//	}
-
 	@Override
 	protected void onPause() {
 
@@ -417,9 +366,19 @@ BDLocationListener,SynthesizerPlayerListener {
 				}
 				id = String.valueOf(conversationInfo.getId());
 				changeConversationsStatus("4", id);
-				Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
-						+ moble));
-				startActivity(intent);
+				//		 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+				//		 + moble));
+				
+				TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+				if(tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT){
+					Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
+							+ moble));
+
+					startActivity(intent);
+
+				}else{
+					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT).show();
+				}
 				isRun = true;
 			}
 			break;
@@ -444,11 +403,19 @@ BDLocationListener,SynthesizerPlayerListener {
 	}
 
 	/**
+	 * 显示我的订单
+	 */
+	private void setMyConversationsView(){
+		
+	}
+	
+	
+	/**
 	 * 获得周围的乘客
 	 */
 	private void getPassengers() {
 		MyLogTools.e("LocationOnverlay", "getPassengers()");
-		System.out.println(lat);
+		//		System.out.println(lat);
 		new Thread(new Runnable() {
 			@SuppressWarnings("unchecked")
 			public void run() {
@@ -530,9 +497,9 @@ BDLocationListener,SynthesizerPlayerListener {
 							new BaseHandler());
 					JSONObject object = new JSONObject(result);
 					tripsInfo = new TripsInfo(object.getJSONObject("trip"));
-					System.out.println(tripsInfo.getStart());
+					//					System.out.println(tripsInfo.getStart());
 					tripsList.add(tripsInfo);
-					System.out.println("getTrip------>" + result);
+					//					System.out.println("getTrip------>" + result);
 					if (result != null) {
 						isRun = false;// 得到一条新请求后，暂停获得新请求
 						requestMessage.sendEmptyMessage(Constant.SUCCESS);
@@ -556,9 +523,6 @@ BDLocationListener,SynthesizerPlayerListener {
 		}).start();
 	}
 
-
-
-
 	/**
 	 * 我的会话（发送给我的请求）
 	 */
@@ -568,7 +532,7 @@ BDLocationListener,SynthesizerPlayerListener {
 
 			public void run() {
 				String map1=null;
-				while (isRun) {
+				while (isRun) {                             
 
 					try {
 
@@ -630,9 +594,9 @@ BDLocationListener,SynthesizerPlayerListener {
 								messageHandler
 								.sendEmptyMessage(Constant.CHANGE1);
 
-								System.out
-								.println("-----getConversations----Status--="
-										+ Status);
+								//							System.out
+								//									.println("-----getConversations----Status--="
+								//											+ Status);
 								if (Status == 0 && !isAnswer) {
 									trip_id = conversationInfo.getTrip_id();
 
@@ -793,7 +757,7 @@ BDLocationListener,SynthesizerPlayerListener {
 					}
 					//下面 代码没有做任何具体操作！！！
 					try {
-						
+
 						JSONObject jsonObject = new JSONObject(result);
 						JSONObject object = jsonObject.getJSONObject("driver");
 						if (object != null) {
@@ -819,7 +783,7 @@ BDLocationListener,SynthesizerPlayerListener {
 	 * 退出
 	 */
 	private void signOut() {
-		
+
 		if (HttpTools.checkNetWork(context)) {
 			new Thread(new Runnable() {
 				public void run() {
@@ -830,11 +794,11 @@ BDLocationListener,SynthesizerPlayerListener {
 						String map1="driver[androidDevice]="+androidDevice;
 						String resultString = (String) HttpTools.getAndParse(
 								Constant.SIGNOUT, map1, new BaseHandler());
-						System.out.println("signOut------->" + resultString);
+						//						System.out.println("signOut------->" + resultString);
 						JSONObject jsonObject = new JSONObject(resultString);
 						if (jsonObject.has("message")) {
-							System.out.println("message--->"
-									+ jsonObject.getString("message"));
+							//							System.out.println("message--->"
+							//									+ jsonObject.getString("message"));
 							exitPro(context);
 							finish();
 							return;
@@ -1000,6 +964,11 @@ BDLocationListener,SynthesizerPlayerListener {
 
 				//	tripsList.add(tripsInfo);
 				showNewMessage();
+				isWaiting=true;
+				//				isStartCount = true;
+				waitingTime=WAITING;
+				countBackwards();
+				//				isStartCount = false;
 				break;
 
 			case Constant.CHANGE:
@@ -1011,6 +980,7 @@ BDLocationListener,SynthesizerPlayerListener {
 				endTextView.setText(" ");
 				money.setText(" ");
 				distant.setText(" ");
+				texttime.setText(" ");
 				//linear_time.setVisibility(View.GONE);
 				break;
 			case Constant.SUCCESS:
@@ -1401,7 +1371,40 @@ BDLocationListener,SynthesizerPlayerListener {
 		mLocClient.start();
 		btn_call.setVisibility(View.GONE);
 		//linear_left.setVisibility(View.GONE);
+		//导航栏
+		linear_nav=(LinearLayout) findViewById(R.id.linear_leftnav);
+		linear_nav_main=(Button) findViewById(R.id.linear_leftnav_main);
+		linear_nav_main.setOnClickListener(this);
+		linear_nav_oppointment=(Button) findViewById(R.id.linear_leftnav_appointment);
+		linear_nav_oppointment.setOnClickListener(this);
+		linear_nav_order=(Button) findViewById(R.id.linear_leftnav_order);
+		linear_nav_order.setOnClickListener(this);
+		
+		//预约界面
+		
+		linear_oppointment=(LinearLayout) findViewById(R.id.linear_oppointment_middle);
+		linear_oppointment_all=(Button) findViewById(R.id.linear_oppointment_middle_all);
+		linear_oppointment_today=(Button)findViewById(R.id.linear_oppointment_middle_today);
+		linear_oppointment_tommorrow=(Button)findViewById(R.id.linear_oppointment_middle_tomorrow);
+		linear_oppointment_long=(Button)findViewById(R.id.linear_oppointment_middle_long);
+		linear_oppointment_near=(Button)findViewById(R.id.linear_oppointment_middle_near);
+		
+		linear_oppointment_all.setOnClickListener(this);
+		linear_oppointment_today.setOnClickListener(this);
+		linear_oppointment_tommorrow.setOnClickListener(this);
+		linear_oppointment_long.setOnClickListener(this);
+		linear_oppointment_near.setOnClickListener(this);
+		
+		//预约listview
+		linear_oppointment_right=(LinearLayout) findViewById(R.id.linear_oppointment_right);
+		
+		linear_oppointment_listview=(ListView)findViewById(R.id.listView_oppointment);
+				//,linear_nav_oppointment,linear_nav_order,linear_nav_set;
 
+		//我的订单控件初始化
+		linearlayout_myorders = (LinearLayout) findViewById(R.id.mapview2_linearlayout_myorders);
+		listview_myorders = (ListView)linearlayout_myorders.findViewById(R.id.my_orders_listview);
+		
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -1452,6 +1455,9 @@ BDLocationListener,SynthesizerPlayerListener {
 			linear_called.setVisibility(View.GONE);
 			tripsList.clear();
 			isRun=true;
+			isWaiting=false;
+			//			isStartCount = true;
+			getPassengers();
 			getConversations();
 			starTextView.setText(tripsInfo.getStart());
 			endTextView.setText(tripsInfo.getEnd());
@@ -1482,11 +1488,16 @@ BDLocationListener,SynthesizerPlayerListener {
 			if(list.size()>0){
 				for(int i=0;i<list.size();i++){
 					conversationInfo1 =list.get(i);
-					biaozhi=0;
+					 
 					if(conversationInfo1.getFrom_id()==conversationInfo.getFrom_id()){
-
+						 biaozhi=0;
 						if(conversationInfo1.getStatus()==0){
 							showCalledView();
+							id = String.valueOf(conversationInfo1.getId());
+							changeConversationsStatus("1", id);
+							conversationInfo1.setStatus(4);
+							isWaiting=false;
+							waitingTime=60;
 							//ispassengersrun=false;
 							//isRun=false;
 							//	new Plysounds(context).synthetizeInSilence("应答成功，请尽快联系乘客");
@@ -1499,10 +1510,17 @@ BDLocationListener,SynthesizerPlayerListener {
 						}
 						else if(conversationInfo1.getStatus()==-1){
 							//	new Plysounds(context).synthetizeInSilence("订单也被抢");
+							isWaiting=false;
 							synthetizeInSilence("订单已经取消");
+							isRun=true;
+							tripsList.clear();
+							//								 isStartCount = true;
+							getPassengers();
+							getConversations();
 							break;
 						}
 						else {
+							isWaiting=false;
 							synthetizeInSilence("订单已经被抢");
 							break;
 						}
@@ -1512,13 +1530,25 @@ BDLocationListener,SynthesizerPlayerListener {
 					}
 
 				}
-				if(biaozhi==0){
+				if(biaozhi==1){
+					isWaiting=false;
 					synthetizeInSilence("订单已经取消");
+					isRun=true;
+					//				 isStartCount = true;
+					tripsList.clear();
+					getPassengers();
+					getConversations();
 				}
 
 			}
 			else {
+				isWaiting=false;
 				synthetizeInSilence("订单已经取消");
+				isRun=true;
+				//			 isStartCount = true;
+				tripsList.clear();
+				getPassengers();
+				getConversations();
 			}
 			//        if(conversationInfo1==null)
 			//        {
@@ -1547,6 +1577,25 @@ BDLocationListener,SynthesizerPlayerListener {
 		case R.id.btn_refurbish:
 			isRun=true;
 			tripsList.clear();
+			mGeoList.clear();
+			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
+			"item1");
+			Drawable maker = getResources().getDrawable(R.drawable.car);
+			item.setMarker(maker);
+			mGeoList.add(item);
+
+			MyItemizedOverlay overlay = new MyItemizedOverlay(context, maker,
+					mGeoList);
+
+			List<Overlay> list = mMapView.getOverlays();
+			if (list != null && list.size() > 0) {
+				list.remove(0);
+			}
+			mMapView.getOverlays().add(0, overlay);
+
+			mapController.animateTo(new GeoPoint(lat, lng), null);
+			mMapView.refresh();
+
 			getPassengers();
 			getConversations();
 			mapController.animateTo(new GeoPoint(lat, lng), null);
@@ -1590,7 +1639,97 @@ BDLocationListener,SynthesizerPlayerListener {
 				isRun = true;
 			}
 			break;
+		 case R.id.linear_leftnav_appointment:
+			 AppointAdapter adapter1=	new AppointAdapter(context, tripsList);
+				tripsList.size();
+				adapter1.upDatas(tripsList);
+				linear_oppointment_listview.setAdapter(adapter1);
+			 linear_left.setVisibility(View.GONE);
+			 mMapView.setVisibility(View.GONE);
+			 linear_oppointment.setVisibility(View.VISIBLE);
+			 linear_oppointment_right.setVisibility(View.VISIBLE);
+			 break;
+		 case R.id.linear_leftnav_main:
+			 linear_left.setVisibility(View.VISIBLE);
+			 mMapView.setVisibility(View.VISIBLE);
+			 linear_oppointment.setVisibility(View.GONE);
+			 linear_oppointment_right.setVisibility(View.GONE);
+			 break;
 		}
+	}
+
+	private void countBackwards() {
+
+		//isWaiting = true;
+
+		if (isStartCount) {
+			isStartCount=false;
+
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					while (isWaiting) {
+
+
+						// TODO Auto-generated method stub
+						try {
+							Thread.currentThread().sleep(1000);
+							Message msg = new Message();
+							waitingTime--;
+							msg.what = WAITING;
+							waitingHandler.sendMessage(msg);
+
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					isStartCount=true;
+				}
+
+			}).start();
+
+		}
+
+
+	}
+
+	Handler waitingHandler =new Handler(){
+		public void handleMessage(Message msg){
+			switch(msg.what){
+			case WAITING:
+				if (waitingTime >= 0) {
+					texttime.setText("" + waitingTime);
+					break;
+				} else if (waitingTime <0) {
+
+					isWaiting = false;
+					waitingTime=60;
+					showTimeOutDialog();
+					//					Intent i = new Intent(context, DialogFrist.class);
+					//					startActivityForResult(i, TIMEOUT);
+
+					break;
+				} else {
+
+				}
+
+			}
+
+		}
+	};
+
+	/**
+	 * 显示TimeOutDialog
+	 * zhaochuan
+	 */
+	private  void showTimeOutDialog(){
+		synthetizeInSilence("该订单已经超时");
+		isRun=true;
+		tripsList.clear();
+		//	 isStartCount = true;
+		getPassengers();
+		getConversations();
 	}
 
 	private void showCalledView() {
@@ -1636,6 +1775,34 @@ BDLocationListener,SynthesizerPlayerListener {
 			Tools.myToast(context, "抱歉目前没有应答");
 	}
 
+	public void getmypassengers(){
+		List<Overlay> list1 = mMapView.getOverlays();
+		list1.clear();
+		Drawable marker = getResources().getDrawable(
+				R.drawable.iconmarka); // �õ���Ҫ���ڵ�ͼ�ϵ���Դ
+		marker.setBounds(0, 0, marker.getIntrinsicWidth(),
+				marker.getIntrinsicHeight());
+
+		for (int i = 1; i < mGeoList.size(); i++) {
+
+			mGeoList.remove(i);
+		}
+
+		MyItemizedOverlay overlay = new MyItemizedOverlay(context,
+				marker, mGeoList);
+
+		mMapView.getOverlays().add(overlay);
+		mMapView.postInvalidate();
+		mMapView.refresh();
+
+
+		showNewMessage();
+
+
+
+
+
+	}
 	/**
 	 * SynthesizerPlayerListener的"播放进度"回调接口.
 	 * @param percent,beginPos,endPos

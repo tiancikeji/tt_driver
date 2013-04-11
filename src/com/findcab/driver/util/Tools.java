@@ -69,7 +69,7 @@ public class Tools {
 
 		String android_id = Secure.getString(context.getContentResolver(),
 				Secure.ANDROID_ID);
-		System.out.println("android_id----->" + android_id);
+//		System.out.println("android_id----->" + android_id);
 		return android_id;
 	}
 

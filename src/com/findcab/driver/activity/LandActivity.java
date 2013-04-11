@@ -68,7 +68,7 @@ public class LandActivity extends Activity implements OnClickListener {
 
 		initView();
 		// ==========测试=========
-		startMainActivity();
+	//	startMainActivity();
 	}
 
 	/**

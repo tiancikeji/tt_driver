@@ -1,285 +1,423 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/my_relative_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 
+    <RelativeLayout
+        android:id="@+id/my_relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    <LinearLayout
+         android:id="@+id/linear_leftnav"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+         android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/info_background_b"
+        android:orientation="vertical" >
+        <Button
+                    android:id="@+id/linear_leftnav_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bt_call"
+                    android:text="主界面"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10dp" />
+
+                <Button
+                    android:id="@+id/linear_leftnav_appointment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/bt_call"
+                    android:text="预约中心"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10dp" />
+                  <Button
+                    android:id="@+id/linear_leftnav_order"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/bt_call"
+                    android:text="我的订单"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10dp" />
+                    <Button
+                    android:id="@+id/linear_leftnav_set"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/bt_call"
+                    android:text="设置"
+                    android:textColor="#FFFFFF"
+                    android:textSize="10dp" />
+       </LinearLayout>
+<!--   主界面-->   
     <LinearLayout
         android:id="@+id/linear_left"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+         android:layout_toRightOf="@+id/linear_leftnav"
+        android:background="@drawable/info_background_b"
+        android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/btn_request"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bt_request"
+                android:textColor="#FFFFFF"
+                android:textSize="18dp"
+                android:visibility="visible" />
+            <!-- android:text="3条新的打车请求" -->
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="370dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/gray"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/info_background_s"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="25dp" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/start" />
+
+                    <TextView
+                        android:id="@+id/textstart"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="30dp" />
+                    <!-- android:text="中关村南大街5号" -->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="27dp"
+                        android:layout_height="29dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/end" />
+
+                    <TextView
+                        android:id="@+id/textend"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="30dp" />
+                    <!-- android:text="清华大学" -->
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="27dp"
+                        android:layout_height="29dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/distant" />
+
+                    <TextView
+                        android:id="@+id/textdistant"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="36dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="公里"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="27dp"
+                        android:layout_height="29dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/money" />
+
+                    <TextView
+                        android:id="@+id/textmoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="36dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="元"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="15dp"
+                    android:visibility="visible" >
+
+                    <ImageView
+                        android:id="@+id/imageView1"
+                        android:layout_width="27dp"
+                        android:layout_height="29dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/time" />
+
+                    <TextView
+                        android:id="@+id/texttime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:text=" "
+                        android:textColor="#FFFFFF"
+                        android:textSize="36dp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="秒"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_call"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bt_answer"
+                    android:text="应答"
+                    android:textColor="#FFFFFF"
+                    android:textSize="36dp" />
+
+                <LinearLayout
+                    android:id="@+id/linear_called"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:visibility="gone" >
+
+                    <Button
+                        android:id="@+id/linear_btcalled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bt_call"
+                        android:text="拨打乘客电话"
+                        android:textColor="#FFFFFF"
+                        android:textSize="36dp" />
+
+                    <Button
+                        android:id="@+id/linear_already"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:background="@drawable/bt_call"
+                        android:text="乘客已上车"
+                        android:textColor="#FFFFFF"
+                        android:textSize="36dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/bmapView"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/head"
+            android:layout_toRightOf="@+id/linear_left"
+            android:clickable="true" />
+
+        <LinearLayout
+            android:id="@+id/linear_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/btn_set"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/bt_set" />
+
+            <Button
+                android:id="@+id/btn_refurbish"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bt_refurbish" />
+
+            <Button
+                android:id="@+id/btn_road"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bt_road" />
+        </LinearLayout>
+    </RelativeLayout>
+
+     <LinearLayout
+        android:id="@+id/linear_oppointment_middle"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+         android:layout_toRightOf="@+id/linear_leftnav"
         android:background="@drawable/info_background_b"
         android:orientation="vertical" >
 
         <Button
-            android:id="@+id/btn_request"
+            android:id="@+id/linear_oppointment_middle_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:background="@drawable/bt_request"
-        
+            android:text="全部预约"
             android:textColor="#FFFFFF"
             android:textSize="18dp"
-            android:visibility="visible" />
-<!--   android:text="3条新的打车请求"-->   
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="370dp"
+           />
+          <Button
+            android:id="@+id/linear_oppointment_middle_today"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:background="@color/gray"
-            android:visibility="gone" />
-
-        <LinearLayout
-            android:id="@+id/linear"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/info_background_s"
-            android:orientation="vertical" >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="25dp" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/start" />
-
-                <TextView
-                    android:id="@+id/textstart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                
-                    android:textColor="#FFFFFF"
-                    android:textSize="30dp" />
-                   <!--   android:text="中关村南大街5号"-->
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="27dp"
-                    android:layout_height="29dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/end" />
-
-                <TextView
-                    android:id="@+id/textend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                
-                    android:textColor="#FFFFFF"
-                    android:textSize="30dp" />
-                <!--     android:text="清华大学" -->
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="27dp"
-                    android:layout_height="29dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/money" />
-
-                <TextView
-                    android:id="@+id/textdistant"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36dp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="公里"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="27dp"
-                    android:layout_height="29dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/money" />
-
-                <TextView
-                    android:id="@+id/textmoney"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36dp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="元"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp"
-                android:visibility="visible" >
-
-                <ImageView
-                    android:id="@+id/imageView1"
-                    android:layout_width="27dp"
-                    android:layout_height="29dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/time" />
-
-                <TextView
-                    android:id="@+id/texttime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="10dp"
-                    android:text="46"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36dp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginLeft="10dp"
-                    android:text="秒"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18dp" />
-            </LinearLayout>
-
+            android:background="@drawable/bt_request"
+             android:text="预约今天"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+           />
             <Button
-                android:id="@+id/btn_call"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/bt_answer"
-                android:text="应答"
-                android:textColor="#FFFFFF"
-                android:textSize="36dp"
-                />
-
-            <LinearLayout
-                android:id="@+id/linear_called"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical"
-                android:visibility="gone" >
-
-                <Button
-                    android:id="@+id/linear_btcalled"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bt_call"
-                    android:text="拨打乘客电话"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36dp" />
-
-                <Button
-                    android:id="@+id/linear_already"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:background="@drawable/bt_call"
-                    android:text="乘客已上车"
-                    android:textColor="#FFFFFF"
-                    android:textSize="36dp" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
-
-    <com.baidu.mapapi.map.MapView
-        android:id="@+id/bmapView"
+            android:id="@+id/linear_oppointment_middle_tomorrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bt_request"
+             android:text="预约明天"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+           />
+              <Button
+            android:id="@+id/linear_oppointment_middle_long"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bt_request"
+            android:text="距离最长"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+           />
+              <Button
+            android:id="@+id/linear_oppointment_middle_near"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bt_request"
+            android:text="离我最近"
+            android:textColor="#FFFFFF"
+            android:textSize="18dp"
+           />
+         </LinearLayout>
+          <LinearLayout
+        android:id="@+id/linear_oppointment_right"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+         android:layout_toRightOf="@+id/linear_oppointment_middle"
+        android:background="@drawable/info_background_b"
+        android:orientation="vertical" >
+              <ListView
+            android:id="@+id/listView_oppointment"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            />
+                </LinearLayout>
+    <LinearLayout
+        android:id="@+id/mapview2_linearlayout_myorders"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/head"
-        android:layout_toRightOf="@+id/linear_left"
-        android:clickable="true" />
-
-    <LinearLayout
-        android:id="@+id/linear_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/btn_set"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@drawable/bt_set" />
-
-        <Button
-            android:id="@+id/btn_refurbish"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/bt_refurbish" />
-
-        <Button
-            android:id="@+id/btn_road"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/bt_road" />
+        android:visibility="gone" >
+        <include
+	       android:id="@+id/mapview2_myorders"
+	       layout="@layout/my_orders" />
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

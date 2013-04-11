@@ -1,7 +1,5 @@
 package com.findcab.driver.activity;
 
-import com.findcab.driver.util.MyLogTools;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;

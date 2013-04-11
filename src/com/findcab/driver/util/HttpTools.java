@@ -193,7 +193,7 @@ public class HttpTools {
 			url = buildGetMethod(url, data).build().toString();
 		}
 
-		System.out.println("url----->" + url);
+//		System.out.println("url----->" + url);
 		HttpGet get = new HttpGet(url);
 		HttpClient client = new DefaultHttpClient();
 		try {
@@ -225,12 +225,12 @@ public class HttpTools {
 			HttpEntity httpEntity = new UrlEncodedFormEntity(list, HTTP.UTF_8);//
 			// 使用编码构建Post实体
 			HttpPost post = new HttpPost(url);
-			System.out.println("url---toString---->" + url.toString());
+//			System.out.println("url---toString---->" + url.toString());
 			post.setEntity(httpEntity);// 设置Post实体
 			HttpClient client = new DefaultHttpClient();
 			HttpResponse response = client.execute(post);// 执行Post方法
 			String resultString = EntityUtils.toString(response.getEntity());
-			System.out.println("resultString------->" + resultString);
+//			System.out.println("resultString------->" + resultString);
 			return resultString;
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
@@ -266,7 +266,7 @@ public class HttpTools {
 				postData.add(new BasicNameValuePair(m.getKey(), m.getValue()));
 			}
 		}
-		System.out.println("-------url------" + url);
+//		System.out.println("-------url------" + url);
 		HttpPost httpPost = new HttpPost(url);
 		BasicHttpParams httpParams = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
@@ -381,7 +381,7 @@ public class HttpTools {
 
 		}
 		url += list.toString();
-		System.out.println("------url url----------" + url);
+//		System.out.println("------url url----------" + url);
 		int status = 0;
 		String jsonStr = null;
 		HttpGet httpRequest = new HttpGet(url);
@@ -410,9 +410,9 @@ public class HttpTools {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out
-					.println("==============connection wifi fail,e.printStackTrace() : "
-							+ e.getMessage());
+//			System.out
+//					.println("==============connection wifi fail,e.printStackTrace() : "
+//							+ e.getMessage());
 			return null;
 		}
 		return null;
@@ -424,7 +424,7 @@ public class HttpTools {
 
 		
 		url += data;
-		System.out.println("------url url----------" + url);
+//		System.out.println("------url url----------" + url);
 		int status = 0;
 		String jsonStr = null;
 		HttpGet httpRequest = new HttpGet(url);
@@ -453,9 +453,9 @@ public class HttpTools {
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out
-					.println("==============connection wifi fail,e.printStackTrace() : "
-							+ e.getMessage());
+//			System.out
+//					.println("==============connection wifi fail,e.printStackTrace() : "
+//							+ e.getMessage());
 			return null;
 		}
 		return null;
@@ -515,7 +515,7 @@ public class HttpTools {
 			// Log.e("HttpTools-get-start", "start: " + start + ", context: "
 			// + context);
 
-			System.out.println("start: " + start);
+//			System.out.println("start: " + start);
 			response = httpClient.execute(httpRequest);
 
 			int status = response.getStatusLine().getStatusCode();
@@ -527,7 +527,7 @@ public class HttpTools {
 			}
 			// Log.e("HttpTools-get-end", "end: "
 			// + (System.currentTimeMillis() - start) + "ms , " + url);
-			System.out.println("end: " + (System.currentTimeMillis() - start));
+//			System.out.println("end: " + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			if (e.getMessage() != null)
 				Log.e("HttpTools-c", e.getMessage());

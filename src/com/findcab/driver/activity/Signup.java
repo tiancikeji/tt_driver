@@ -209,8 +209,8 @@ public class Signup extends Activity implements OnClickListener {
 
 						lat = 39.876757965948;
 						lng = 116.65188108138;
-						System.out.println("lat--->" + lat);
-						System.out.println("lng--->" + lng);
+//						System.out.println("lat--->" + lat);
+//						System.out.println("lng--->" + lng);
 					}
 
 					map.put("driver[lat]", String.valueOf(lat));
