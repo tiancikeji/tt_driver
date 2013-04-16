@@ -2,7 +2,7 @@ package com.findcab.driver.adapter;
 
 import java.util.List;
 
-import com.findcab.driver.activity.R;
+import com.findcab.R;
 import com.findcab.driver.object.TripsInfo;
 
 import android.content.Context;

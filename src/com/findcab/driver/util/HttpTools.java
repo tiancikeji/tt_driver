@@ -32,7 +32,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.Log;
 
 import com.findcab.driver.handler.Ihandler;
 
@@ -288,7 +287,7 @@ public class HttpTools {
 			}
 		} catch (Exception e) {
 			if (e.getMessage() != null)
-				Log.e("HttpTools", e.getMessage());
+//				Log.e("HttpTools", e.getMessage());
 			responseStatus = 2;
 
 			return null;
@@ -302,7 +301,7 @@ public class HttpTools {
 				Object resultMessage = ihandler.parseResponse(ins);
 				return resultMessage;
 			} catch (Exception e) {
-				Log.e("HttpTools", e.getMessage());
+//				Log.e("HttpTools", e.getMessage());
 				responseStatus = 3;
 				return null;
 			}
@@ -530,7 +529,7 @@ public class HttpTools {
 //			System.out.println("end: " + (System.currentTimeMillis() - start));
 		} catch (Exception e) {
 			if (e.getMessage() != null)
-				Log.e("HttpTools-c", e.getMessage());
+//				Log.e("HttpTools-c", e.getMessage());
 			try {
 
 				Tools.myToast(context, "网络状态较差，链接超时");
@@ -550,7 +549,7 @@ public class HttpTools {
 				return resultMessage;
 			} catch (Exception e) {
 				if (e.getMessage() != null)
-					Log.e("HttpTools-d", e.getMessage());
+//					Log.e("HttpTools-d", e.getMessage());
 				responseStatus = 3;
 			}
 		}

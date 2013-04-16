@@ -6,13 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.StrictMode;
 import android.provider.Settings.Secure;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.findcab.driver.activity.R;
+import com.findcab.R;
 
 public class Tools {
 	public static final boolean isShow = true;
@@ -76,7 +75,6 @@ public class Tools {
 	public static void onKeyDown(int keyCode, Context context) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Log.d("back", "back");
 			// exitPro(context);
 			exitDialog(context);
 		}

@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.findcab.R;
 import com.findcab.driver.object.DriverInfo;
 import com.findcab.driver.util.Constant;
 import com.findcab.driver.util.HttpTools;

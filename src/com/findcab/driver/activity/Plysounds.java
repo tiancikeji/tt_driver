@@ -3,6 +3,8 @@ package com.findcab.driver.activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.Toast;
+
+import com.findcab.R;
 import com.iflytek.speech.SpeechError;
 import com.iflytek.speech.SynthesizerPlayer;
 import com.iflytek.speech.SynthesizerPlayerListener;

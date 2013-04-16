@@ -1,10 +1,16 @@
 package com.findcab.driver.activity;
 
+import cn.jpush.android.api.JPushInterface;
+
+import com.findcab.R;
+import com.findcab.driver.util.MyLogTools;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
@@ -19,6 +25,15 @@ public class WelcomActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		//初始化极光推送
+		initJPush();
+		
+		//获取imei
+		TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE); 
+		String imei = tm.getDeviceId();
+		MyLogTools.e("imei", ""+imei);
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.welcome);
 		welcom_layout = (RelativeLayout) findViewById(R.id.welcom_layout);
@@ -50,6 +65,7 @@ public class WelcomActivity extends Activity {
 			}
 
 		}, 1000);
+		
 	}
 
 	/**
@@ -66,5 +82,10 @@ public class WelcomActivity extends Activity {
 
 		return false;
 	}
+	
 
+	// 初始化 JPush。如果已经初始化，但没有登录成功，则执行重新登录。
+	private void initJPush(){
+		JPushInterface.init(getApplicationContext());
+	}
 }

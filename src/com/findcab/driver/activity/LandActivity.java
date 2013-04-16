@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.findcab.R;
 import com.findcab.driver.handler.BaseHandler;
 import com.findcab.driver.object.DriverInfo;
 import com.findcab.driver.util.Constant;

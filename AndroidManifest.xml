@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.findcab.driver.activity"
+    package="com.findcab"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -11,37 +11,38 @@
         android:label="@string/app_name" >
         <activity
             android:label="@string/app_name"
-            android:name=".WelcomActivity"
+            android:name="com.findcab.driver.activity.WelcomActivity"
             android:screenOrientation="landscape" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="jpush.testAction" />
+                <category android:name="jpush.testCategory" />
             </intent-filter>
         </activity>
         <activity
             android:launchMode="singleInstance"
-            android:name=".PassengerActivity"
+            android:name="com.findcab.driver.activity.PassengerActivity"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".LocationOverlay"
+            android:name="com.findcab.driver.activity.LocationOverlay"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".LandActivity"
+            android:name="com.findcab.driver.activity.LandActivity"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".CallActivity"
+            android:name="com.findcab.driver.activity.CallActivity"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".Signup"
+            android:name="com.findcab.driver.activity.Signup"
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".TtsDemoActivity"
+            android:name="com.findcab.driver.activity.TtsDemoActivity"
             android:screenOrientation="landscape" >
         </activity>
 
@@ -49,6 +50,49 @@
             android:enabled="true"
             android:name="com.baidu.location.f"
             android:process=":remote" >
+        </service>
+        <!-- 激光推送 -->
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER" />
+                <action android:name="cn.jpush.android.intent.REPORT" />
+                <action android:name="cn.jpush.android.intent.PushService" />
+                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
+            </intent-filter>
+        </service>
+         <!-- Required SDK核心功能-->
+        <!-- <receiver-->
+        <!--     android:name="cn.jpush.android.service.PushReceiver"-->
+        <!--     android:enabled="true" >-->
+        <!--   <intent-filter android:priority="1000"> since 1.3.5 -->
+         <!--        <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" /> since 1.3.5 -->
+         <!--        <category android:name="com.findcab" /> since 1.3.5 -->
+         <!--    </intent-filter> since 1.3.5 -->
+        <!--     <intent-filter>-->
+         <!--        <action android:name="android.intent.action.USER_PRESENT" />-->
+         <!--        <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+         <!--    </intent-filter>-->
+         <!--    <intent-filter>-->
+         <!--        <action android:name="android.intent.action.PACKAGE_ADDED" />-->
+         <!--        <action android:name="android.intent.action.PACKAGE_REMOVED" />-->
+         <!--        <data android:scheme="package" />-->
+         <!--    </intent-filter>-->
+       <!--  </receiver>-->
+        
+        <!-- Required SDK核心功能-->
+        <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
+        
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
+        <meta-data android:name="JPUSH_APPKEY" android:value="1fcf114a7565afe55dd79ea4" /> <!--  </>值来自开发者平台取得的AppKey-->
+      
+        
+        <service
+            android:name="cn.jpush.android.service.DownloadService"
+            android:enabled="true"
+            android:exported="false" >
         </service>
     </application>
 
@@ -121,4 +165,32 @@
 
     <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
 
+    <!-- 激光推送权限 -->
+    <permission
+        android:name="com.findcab.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
+  
+    <!-- Required  一些系统要求的权限，如访问网络等-->
+    <uses-permission android:name="com.findcab.permission.JPUSH_MESSAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>  
+
+    
+    
+    <!-- Optional for location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    
 </manifest>

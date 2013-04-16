@@ -29,4 +29,6 @@ public class Constant {
 	public static final String UPDATE = BASEURL + "drivers/?";// 获得路线
 	
 	public static final String VERSION_ID= "1.0.0";//版本号
+	public static final String MY_IMEI = "";//手机imei,测试使用868652012752662
+
 }

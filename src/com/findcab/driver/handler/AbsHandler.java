@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import android.util.Log;
-
 /**
  * 抽象处理器
  * 
@@ -26,7 +24,7 @@ public abstract class AbsHandler implements Ihandler {
 
 			reponseResult = parseResponse(responseStr);
 		} catch (Exception e) {
-			Log.i("AbsHandler", e.getMessage());
+//			Log.i("AbsHandler", e.getMessage());
 			throw e;
 		}
 		return reponseResult;

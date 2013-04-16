@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.findcab.driver.activity.R;
-import com.findcab.driver.object.ConversationInfo;
-import com.findcab.driver.object.PassengerInfo;
+import com.findcab.R;
 import com.findcab.driver.object.TripsInfo;
 
 public class InfoAdapter extends BaseAdapter {
