@@ -278,7 +278,7 @@ public class HttpTools {
 					HTTP.UTF_8);
 			httpPost.setEntity(entity);
 			response = httpClient.execute(httpPost);
-
+			
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				responseStatus = 1;
 			} else {
@@ -401,9 +401,11 @@ public class HttpTools {
 				// HTTP.UTF_8);//
 				InputStream ins = httpEntity.getContent();
 				Object resultMessage = ihandler.parseResponse(ins);
-				return resultMessage;
-				// jsonStr = EntityUtils.toString(httpResponse.getEntity(),
-				// "UTF-8");
+				
+				 jsonStr = EntityUtils.toString(httpResponse.getEntity(),
+				 "UTF-8");
+				 MyLogTools.e("请求服务器返回结果", jsonStr);
+				 return resultMessage;
 				// System.out.println("jsonStr================>" + jsonStr);
 			}
 
@@ -421,9 +423,9 @@ public class HttpTools {
 	public static Object getAndParse(String url,  String data,
 			Ihandler ihandler) {
 
-		
 		url += data;
 //		System.out.println("------url url----------" + url);
+		MyLogTools.e("请求服务器url", url);
 		int status = 0;
 		String jsonStr = null;
 		HttpGet httpRequest = new HttpGet(url);
@@ -440,21 +442,16 @@ public class HttpTools {
 			if (status == HttpStatus.SC_OK) {
 
 				HttpEntity httpEntity = httpResponse.getEntity();
-				// HttpEntity httpEntity = new UrlEncodedFormEntity(list,
-				// HTTP.UTF_8);//
 				InputStream ins = httpEntity.getContent();
 				Object resultMessage = ihandler.parseResponse(ins);
 				return resultMessage;
-				// jsonStr = EntityUtils.toString(httpResponse.getEntity(),
-				// "UTF-8");
-				// System.out.println("jsonStr================>" + jsonStr);
+				 
+			}else{
+				 MyLogTools.e("请求服务器返回结果", "无结果");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-//			System.out
-//					.println("==============connection wifi fail,e.printStackTrace() : "
-//							+ e.getMessage());
 			return null;
 		}
 		return null;

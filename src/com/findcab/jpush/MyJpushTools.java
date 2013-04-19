@@ -23,7 +23,7 @@ public class MyJpushTools {
 		
 		//调用JPush API设置Alias
 		JPushInterface.setAliasAndTags(context.getApplicationContext(), alias, null);
-		Toast.makeText(context,"设置成功", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(context,"设置成功", Toast.LENGTH_SHORT).show();
 
 	}
 

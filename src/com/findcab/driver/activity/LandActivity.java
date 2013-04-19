@@ -14,12 +14,17 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 import com.findcab.R;
 import com.findcab.driver.handler.BaseHandler;
 import com.findcab.driver.object.DriverInfo;
@@ -34,7 +39,7 @@ import com.findcab.driver.util.Tools;
  * @author yuqunfeng
  * 
  */
-public class LandActivity extends Activity implements OnClickListener {
+public class LandActivity extends Activity implements OnClickListener,BDLocationListener {
 
 	private EditText nameEditText = null;
 	private EditText passEditText = null;
@@ -58,6 +63,9 @@ public class LandActivity extends Activity implements OnClickListener {
 	protected String error;
 	protected DriverInfo info;
 
+	private double lat;// 经度
+	private double lng;// 纬度
+	private LocationClient mLocClient;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,8 +76,15 @@ public class LandActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.land);
 
 		initView();
+		startLocation();
 		// ==========测试=========
 	//	startMainActivity();
+	}
+
+	@Override
+	protected void onDestroy() {
+		mLocClient.stop();
+		super.onDestroy();
 	}
 
 	/**
@@ -134,6 +149,8 @@ public class LandActivity extends Activity implements OnClickListener {
 						MD5 md5 = new MD5();
 						map.put("driver[mobile]", name);
 						map.put("driver[password]", md5.getMD5ofStr(password));
+						map.put("driver[lat]", String.valueOf(lat));
+						map.put("driver[lng]", String.valueOf(lng));
 						// String result = HttpTools.PostDate(
 						// Constant.DRIVERS_SIGNIN, map);
 						String result = (String) HttpTools
@@ -252,4 +269,32 @@ public class LandActivity extends Activity implements OnClickListener {
 
 	}
 
+	private void startLocation(){
+		mLocClient = new LocationClient(this);
+
+		LocationClientOption option = new LocationClientOption();
+		option.setOpenGps(true);// 打开gps
+		option.setCoorType("bd09ll"); // 设置坐标类型
+		mLocClient.setLocOption(option);
+		mLocClient.registerLocationListener(this);// 要实现BDLocationListener的接口
+		mLocClient.start();
+	}
+	
+	@Override
+	public void onReceiveLocation(BDLocation location) {
+		if (HttpTools.checkNetWork(this)) {
+
+			lat = location.getLatitude();
+			lng = location.getLongitude();
+			Log.e("定位", lat+"-"+lng);
+		}
+		
+	}
+
+
+	@Override
+	public void onReceivePoi(BDLocation arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }
