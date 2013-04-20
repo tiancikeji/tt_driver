@@ -151,6 +151,7 @@ public class LandActivity extends Activity implements OnClickListener,BDLocation
 						map.put("driver[password]", md5.getMD5ofStr(password));
 						map.put("driver[lat]", String.valueOf(lat));
 						map.put("driver[lng]", String.valueOf(lng));
+						Log.e("定位2", lat+"-"+lng);
 						// String result = HttpTools.PostDate(
 						// Constant.DRIVERS_SIGNIN, map);
 						String result = (String) HttpTools
@@ -286,7 +287,7 @@ public class LandActivity extends Activity implements OnClickListener,BDLocation
 
 			lat = location.getLatitude();
 			lng = location.getLongitude();
-			Log.e("定位", lat+"-"+lng);
+			Log.e("定位1", lat+"-"+lng);
 		}
 		
 	}

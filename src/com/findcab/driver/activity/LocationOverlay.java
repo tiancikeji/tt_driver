@@ -18,6 +18,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,6 +28,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -80,7 +82,7 @@ import com.iflytek.speech.SynthesizerPlayer;
 import com.iflytek.speech.SynthesizerPlayerListener;
 
 public class LocationOverlay extends Activity implements OnClickListener,
-		BDLocationListener, SynthesizerPlayerListener {
+BDLocationListener, SynthesizerPlayerListener {
 
 	// 缓存对象.
 	private SharedPreferences mSharedPreferences;
@@ -124,9 +126,12 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	private int lat;
 	private int lng;
 
+	// 定位坐标
+	private double latOnwer;
+	private double lngOnwer;
+
 	private List<PassengerInfo> listInfo;
 	public Bundle bundle;
-	private RelativeLayout bottom_button;
 	private DriverInfo info;
 	private OwnerInfo ownerInfo;
 	// private boolean isRun = true;//轮询时使用，用来判断是否循环获取会话
@@ -162,13 +167,13 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	// 导航栏
 	private LinearLayout linear_nav;
 	private Button linear_nav_main, linear_nav_oppointment, linear_nav_order,
-			linear_nav_set;
+	linear_nav_set;
 
 	// 预约界面
 	private LinearLayout linear_oppointment;
 	private Button linear_oppointment_all, linear_oppointment_today,
-			linear_oppointment_tommorrow, linear_oppointment_long,
-			linear_oppointment_near;
+	linear_oppointment_tommorrow, linear_oppointment_long,
+	linear_oppointment_near;
 	// 预约listview
 	private LinearLayout linear_oppointment_right;
 	private ListView linear_oppointment_listview;
@@ -188,6 +193,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			switch (msg.what) {
 			case MESSAGE_CONVERSATIONS_CHANGE:
 				Toast.makeText(context, "会话更新", Toast.LENGTH_SHORT).show();
+				Log.e("刷新会话", "会话更新");
 				getConversations();
 				break;
 			case MESSAGE_DRIVERS_CHANGE:
@@ -234,7 +240,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		map.put("driver[password]", md5.getMD5ofStr(password));
 		// String result = HttpTools.PostDate(
 		// Constant.DRIVERS_SIGNIN, map);
-		//登陆
+		// 登陆
 		String result = (String) HttpTools.postAndParse(
 				Constant.DRIVERS_SIGNIN, map, new BaseHandler());
 
@@ -253,8 +259,9 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 				JSONObject object = jsonObject.getJSONObject("driver");
 				info = new DriverInfo(object);
-				MyLogTools.e("LocationOverlay-UserInfo", info.getMobile()+"-"+info.getId());
-				
+				MyLogTools.e("LocationOverlay-UserInfo", info.getMobile() + "-"
+						+ info.getId());
+
 				// ownerInfo = new
 				// OwnerInfo(object);//以后都用这个类，DriverInfo可以用来保存所有司机信息
 				upDatedes();
@@ -272,9 +279,9 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 	@Override
 	protected void onStart() {
-		super.onStart();	
+		super.onStart();
 		initMyBroadcastReceiver();// 动态注册广播
-		
+
 	}
 
 	@Override
@@ -283,7 +290,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		if (null != mSynthesizerPlayer) {
 			mSynthesizerPlayer.cancel();
 		}
-		unregisterReceiver(myreceiver);// 当主activity关闭，广播关闭
+		// unregisterReceiver(MyReceiver);// 当主activity关闭，广播关闭
 		super.onStop();
 	}
 
@@ -388,6 +395,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		case R.id.answer: // 应答
 			id = String.valueOf(conversationInfo.getId());
 			changeConversationsStatus("1", id);
+			// 这里的处理是错误的，应该是修改服务器成功后，将conversationInfo修改为1，以应答
 			conversationInfo.setStatus(1);
 			// answer.setVisibility(View.GONE);
 			isAnswer = true;
@@ -397,7 +405,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			changeConversationsStatus("2", id);
 			// answer.setVisibility(View.VISIBLE);
 			layout_instruction.setVisibility(View.GONE);
-			bottom_button.setVisibility(View.GONE);
 			isAnswer = false;
 			conversationInfo = null;
 			// getConversations();
@@ -419,7 +426,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 				changeConversationsStatus("4", id);
 
 				TelephonyManager tm = (TelephonyManager) getBaseContext()
-						.getSystemService(Context.TELEPHONY_SERVICE);
+				.getSystemService(Context.TELEPHONY_SERVICE);
 				if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
 					Intent intent = new Intent(Intent.ACTION_CALL,
 							Uri.parse("tel:" + moble));
@@ -428,13 +435,12 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 				} else {
 					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT)
-							.show();
+					.show();
 				}
 			}
 			break;
 		case R.id.finish: // 乘客上车
 			layout_instruction.setVisibility(View.GONE);
-			bottom_button.setVisibility(View.GONE);
 			showNorm();
 			id = String.valueOf(conversationInfo.getId());
 			changeConversationsStatus("4", id);
@@ -473,14 +479,15 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					try {
 
 						String map1 = null;
-						double lat1 = ((double) lat) / 1000000;
-						double lng1 = ((double) lng) / 1000000;
+						// double lat1 = ((double) lat) / 1000000;
+						// double lng1 = ((double) lng) / 1000000;
+						// map1 = "passenger[androidDevice]=" + androidDevice
+						// + "&passenger[lat]=" + String.valueOf(lat1)
+						// + "&passenger[lng]=" + String.valueOf(lng1);
 						map1 = "passenger[androidDevice]=" + androidDevice
-								+ "&passenger[lat]=" + String.valueOf(lat1)
-								+ "&passenger[lng]=" + String.valueOf(lng1);
-						
-//						MyLogTools.e("获取附近乘客", lat1+":"+lng1);
-						
+						+ "&passenger[lat]=" + String.valueOf(latOnwer)
+						+ "&passenger[lng]=" + String.valueOf(lngOnwer);
+
 						listInfo = (List<PassengerInfo>) HttpTools.getAndParse(
 								Constant.DRIVERS_PASSENGERS, map1,
 								new PassengersHandler());
@@ -489,11 +496,11 @@ public class LocationOverlay extends Activity implements OnClickListener,
 							// isRun = true;
 							messageHandler.sendEmptyMessage(Constant.SUCCESS);
 						} else {
-//							MyLogTools.e("获取附近乘客失败", "无乘客数据");
+							// MyLogTools.e("获取附近乘客失败", "无乘客数据");
 							messageHandler.sendEmptyMessage(Constant.FAILURE);
 						}
 						try {
-							//获取周围乘客一分钟刷新一次
+							// 获取周围乘客一分钟刷新一次
 							Thread.sleep(60000);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
@@ -549,7 +556,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 		}).start();
 	}
-	
+
 	/**
 	 * 我的会话（发送给我的请求）
 	 */
@@ -569,14 +576,16 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					map1 = "[to_id=" + String.valueOf(info.getId()) + "]";
 					if (!isAnswer) {
 						MyLogTools.e("LocationOverlay-getConversation()", "1");
-						list = (List<ConversationInfo>) HttpTools.getAndParse(Constant.CONVERSATIONS, map1,new ConversationsHandler());
+						list = (List<ConversationInfo>) HttpTools.getAndParse(
+								Constant.CONVERSATIONS, map1,
+								new ConversationsHandler());
 
 					} else {
 						MyLogTools.e("LocationOverlay-getConversation()", "2");
 						if (list != null) {
 							list = (List<ConversationInfo>) HttpTools
-									.getAndParse(Constant.CONVERSATIONS, map1,
-											new ConversationsHandler());
+							.getAndParse(Constant.CONVERSATIONS, map1,
+									new ConversationsHandler());
 						}
 
 					}
@@ -594,11 +603,11 @@ public class LocationOverlay extends Activity implements OnClickListener,
 								getTrip(trip_id);
 							} else if (Status == -1 && isAnswer) {
 								giveupHandler
-										.sendEmptyMessage(Constant.SUCCESS);
+								.sendEmptyMessage(Constant.SUCCESS);
 
 							} else if (Status == 3 && isAnswer) {
 								giveupHandler
-										.sendEmptyMessage(Constant.SUCCESS);
+								.sendEmptyMessage(Constant.SUCCESS);
 								count2++;
 							}
 						}
@@ -608,7 +617,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					}
 
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(60000);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -783,6 +792,14 @@ public class LocationOverlay extends Activity implements OnClickListener,
 						if (jsonObject.has("message")) {
 							// System.out.println("message--->"
 							// + jsonObject.getString("message"));
+
+//							// 退出登录后要清楚缓存
+//							SharedPreferences share = getSharedPreferences(
+//									"data", 0);
+//							Editor editor = share.edit();
+//							editor.clear();
+//							editor.commit();
+
 							exitPro(context);
 							finish();
 							return;
@@ -806,7 +823,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	 */
 	private void showNewMessage() {
 		MyLogTools.e("LocationOnverlay", "showNewMessage()");
-		// bottom_button.setVisibility(View.VISIBLE);
 		// answer.setVisibility(View.VISIBLE);
 		// line1.setVisibility(View.VISIBLE);
 		// line2.setVisibility(View.VISIBLE);
@@ -820,7 +836,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	 */
 	private void showNorm() {
 		MyLogTools.e("LocationOnverlay", "showNorm()");
-		// bottom_button.setVisibility(View.GONE);
 		// layout_instruction.setVisibility(View.GONE);
 		// answer.setVisibility(View.VISIBLE);
 	}
@@ -830,13 +845,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	 */
 	private void showAnswer() {
 		MyLogTools.e("LocationOnverlay", "showAnswer()");
-		// bottom_button.setBackgroundColor(Color.parseColor("#DCDCDC"));
-		// bottom_button.setVisibility(View.VISIBLE);
-		// layout_instruction.setVisibility(View.VISIBLE);
-		// // answer.setVisibility(View.GONE);
-		// line1.setVisibility(View.GONE);
-		// line2.setVisibility(View.GONE);
-		// bottom_button.setBackgroundColor(Color.GRAY);
+		
 
 	}
 
@@ -846,7 +855,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			switch (msg.what) {
 			case Constant.CHANGE1:
 				MyLogTools.e("LocationOnverlay",
-						"messageHandler-Constant.CHANGE1");
+				"messageHandler-Constant.CHANGE1");
 				// btn_request.setText(list.size()+"条新的未读打车请求");
 				// // btn_request.setVisibility(View.GONE);
 				// btn_call.setVisibility(View.VISIBLE);
@@ -856,7 +865,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 				break;
 			case Constant.CHANGE2:
 				MyLogTools.e("LocationOnverlay",
-						"messageHandler-Constant.CHANGE2");
+				"messageHandler-Constant.CHANGE2");
 				// new Plysounds(context).synthetizeInSilence("你有一条从"
 				// + tripsInfo.getStart() + "到" + tripsInfo.getEnd() + "搭车请求！");
 				//
@@ -872,12 +881,12 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 					mGeoList.remove(i);
 				}
-				//这里是打补丁，不应该在这里来处理数据不存在情况！
-				if(listInfo != null && listInfo.size() != 0 && list != null&& list.size() > 0){
+				// 这里是打补丁，不应该在这里来处理数据不存在情况！
+				if (listInfo != null && listInfo.size() != 0 && list != null
+						&& list.size() > 0) {
 					int size = listInfo.size();
 					OverlayItem item = null;
-					int lat,
-					lng;
+					int lat, lng;
 					PassengerInfo info;
 					ConversationInfo cinfo;
 					Drawable maker = getResources().getDrawable(
@@ -910,7 +919,8 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					// mMapView.getOverlays().add(ov);
 					// mMapView.postInvalidate();
 					// mMapView.refresh();
-					// mMapView.getController().setCenter(new GeoPoint(cLat,cLon));
+					// mMapView.getController().setCenter(new
+					// GeoPoint(cLat,cLon));
 					MyItemizedOverlay overlay = new MyItemizedOverlay(context,
 							maker, mGeoList);
 					// for(OverlayItem item1 : mGeoList){
@@ -920,21 +930,21 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					mMapView.getOverlays().add(overlay);
 					mMapView.postInvalidate();
 					mMapView.refresh();
-					
-				}else{
-					//无乘客数据
-					
+
+				} else {
+					// 无乘客数据
+
 				}
-				//目前先判断路线信息是否存在，这里不晚上，以后会修改
-				if(tripsInfo != null && tripsInfo.getStart() != null){
-					synthetizeInSilence("你有一条从" + tripsInfo.getStart() + "到" + tripsInfo.getEnd() + "搭车请求！");
-					
+				// 目前先判断路线信息是否存在，这里不晚上，以后会修改
+				if (tripsInfo != null && tripsInfo.getStart() != null) {
+					synthetizeInSilence("你有一条从" + tripsInfo.getStart() + "到"
+							+ tripsInfo.getEnd() + "搭车请求！");
+
 					linear_left.setVisibility(View.VISIBLE);
 					btn_request.setText(list.size() + "条新的未读打车请求");
 					// btn_request.setVisibility(View.GONE);
 					if (biao == 0)
 						btn_call.setVisibility(View.VISIBLE);
-					// bottom_button.setVisibility(View.VISIBLE);
 					starTextView.setText(tripsInfo.getStart());
 					endTextView.setText(tripsInfo.getEnd());
 					if (tripsInfo.getAppointment().equals(null)) {
@@ -951,18 +961,17 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					// isStartCount = true;
 					waitingTime = WAITING;
 					countBackwards();
-				}else{
-					//无路线信息
+				} else {
+					// 无路线信息
 					MyLogTools.e("测试路线数据是否存在", "无数据");
 				}
-				
-				
+
 				// isStartCount = false;
 				break;
 
 			case Constant.CHANGE:
 				MyLogTools.e("LocationOnverlay",
-						"messageHandler-Constant.CHANGE");
+				"messageHandler-Constant.CHANGE");
 				btn_request.setText(R.string.noask);
 				// btn_request.setVisibility(View.GONE);
 				btn_call.setVisibility(View.GONE);
@@ -975,7 +984,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 				break;
 			case Constant.SUCCESS:
 				MyLogTools.e("LocationOnverlay",
-						"messageHandler-Constant.SUCCESS");
+				"messageHandler-Constant.SUCCESS");
 				// Toast.makeText(context, "youchengke",
 				// Toast.LENGTH_SHORT).show();
 				// List<Overlay> list1 = mMapView.getOverlays();
@@ -1047,7 +1056,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			}
 		}
 	};
-	
+
 	/**
 	 * 获得请求
 	 */
@@ -1057,27 +1066,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			switch (msg.what) {
 
 			case Constant.SUCCESS:
-				// linear_left.setVisibility(View.VISIBLE);
-				// btn_request.setText(list.size()+"条新的未读打车请求");
-				// // btn_request.setVisibility(View.GONE);
-				// if(biao==0)
-				// btn_call.setVisibility(View.VISIBLE);
-				// // bottom_button.setVisibility(View.VISIBLE);
-				// starTextView.setText(tripsInfo.getStart());
-				// endTextView.setText(tripsInfo.getEnd());
-				// if(tripsInfo.getAppointment()==null){
-				// money.setText(0);
-				// distant.setText("不详");
-				// }
-				// else
-				// {
-				// money.setText(tripsInfo.getAppointment());
-				// distant.setText(tripsInfo.getAppointment());
-				// }
-				//
-				//
-				// // tripsList.add(tripsInfo);
-				// showNewMessage();
 
 				break;
 			case Constant.FAILURE:
@@ -1259,7 +1247,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		// 杀死Application
 		String packName = context.getPackageName();
 		ActivityManager activityMgr = (ActivityManager) context
-				.getSystemService(Context.ACTIVITY_SERVICE);
+		.getSystemService(Context.ACTIVITY_SERVICE);
 		activityMgr.restartPackage(packName);
 		activityMgr.killBackgroundProcesses(packName);
 		android.os.Process.killProcess(android.os.Process.myPid());
@@ -1295,11 +1283,15 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	public void onReceiveLocation(BDLocation location) {
 		MyLogTools.e("LocationOnverlay", "onReceiveLocation()");
 		// TODO Auto-generated method stub
+
+		latOnwer = location.getLatitude();
+		lngOnwer = location.getLongitude();
+
 		lat = (int) (location.getLatitude() * 1e6);
 		lng = (int) (location.getLongitude() * 1e6);
 		pt = new GeoPoint(lat, lng);
 		OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
-				"item1");
+		"item1");
 		Drawable maker = getResources().getDrawable(R.drawable.car);
 		item.setMarker(maker);
 		mGeoList.add(item);
@@ -1403,7 +1395,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		// 我的订单控件初始化
 		linearlayout_myorders = (LinearLayout) findViewById(R.id.mapview2_linearlayout_myorders);
 		listview_myorders = (ListView) linearlayout_myorders
-				.findViewById(R.id.my_orders_listview);
+		.findViewById(R.id.my_orders_listview);
 
 		listView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -1432,11 +1424,12 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		switch (v.getId()) {
 		case R.id.linear_already: // 乘客上车
 			// linear_left.setVisibility(View.GONE);
-			// bottom_button.setVisibility(View.GONE);
 			// showNorm();
 			id = String.valueOf(conversationInfo.getId());
-			changeConversationsStatus("4", id);
+			changeConversationsStatus("4", id);//4代表乘客以上车
 			conversationInfo.setStatus(4);
+			conversationInfo = null;
+			
 			isAnswer = false;
 
 			for (int i = 0; i < list.size(); i++) {
@@ -1566,14 +1559,13 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			// }
 			break;
 		case R.id.btn_request:
-
 			showPassengerListView();
 			break;
 		case R.id.btn_refurbish:
 			tripsList.clear();
 			mGeoList.clear();
 			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
-					"item1");
+			"item1");
 			Drawable maker = getResources().getDrawable(R.drawable.car);
 			item.setMarker(maker);
 			mGeoList.add(item);
@@ -1649,6 +1641,9 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		}
 	}
 
+	/**
+	 * 倒计时
+	 */
 	private void countBackwards() {
 
 		// isWaiting = true;
@@ -1695,9 +1690,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 					isWaiting = false;
 					waitingTime = 60;
 					showTimeOutDialog();
-					// Intent i = new Intent(context, DialogFrist.class);
-					// startActivityForResult(i, TIMEOUT);
-
+					
 					break;
 				} else {
 
@@ -1714,7 +1707,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	private void showTimeOutDialog() {
 		synthetizeInSilence("该订单已经超时");
 		tripsList.clear();
-		// isStartCount = true;
 		getPassengers();
 		getConversations();
 	}
@@ -1733,9 +1725,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 
 		getConversations();
 
-		// InfoAdapter adapter =new InfoAdapter(context, tripsList);
-		//
-		// listView.setAdapter(adapter);
 	}
 
 	private void showPassengerListView() {
@@ -1744,13 +1733,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 			linear.setVisibility(View.GONE);
 			btn_request.setVisibility(View.GONE);
 
-			// List<ConversationInfo> list = new ArrayList<ConversationInfo>();
-
-			// for (int i = 0; i < 3; i++) {
-			//
-			// list.add(new ConversationInfo());
-			//
-			// }
 			InfoAdapter adapter = new InfoAdapter(context, tripsList);
 			tripsList.size();
 			adapter.upDatas(tripsList);
@@ -1758,31 +1740,6 @@ public class LocationOverlay extends Activity implements OnClickListener,
 		} else
 			Tools.myToast(context, "抱歉目前没有应答");
 	}
-
-	// 此方法没有用到
-	// public void getmypassengers(){
-	// List<Overlay> list1 = mMapView.getOverlays();
-	// list1.clear();
-	// Drawable marker = getResources().getDrawable(
-	// R.drawable.iconmarka); // �õ���Ҫ���ڵ�ͼ�ϵ���Դ
-	// marker.setBounds(0, 0, marker.getIntrinsicWidth(),
-	// marker.getIntrinsicHeight());
-	//
-	// for (int i = 1; i < mGeoList.size(); i++) {
-	//
-	// mGeoList.remove(i);
-	// }
-	//
-	// MyItemizedOverlay overlay = new MyItemizedOverlay(context,
-	// marker, mGeoList);
-	//
-	// mMapView.getOverlays().add(overlay);
-	// mMapView.postInvalidate();
-	// mMapView.refresh();
-	//
-	//
-	// showNewMessage();
-	// }
 
 	/**
 	 * SynthesizerPlayerListener的"播放进度"回调接口.
@@ -1841,72 +1798,38 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	 */
 	private void initMyBroadcastReceiver() {
 		IntentFilter filter = new IntentFilter();
-
 		filter.addAction("cn.jpush.android.intent.REGISTRATION");// 用户注册SDK的intent
 		filter.addAction("cn.jpush.android.intent.UNREGISTRATION");
 		filter.addAction("cn.jpush.android.intent.MESSAGE_RECEIVED");// 用户接收SDK消息的intent
 		filter.addAction("cn.jpush.android.intent.NOTIFICATION_RECEIVED");// 用户接收SDK通知栏信息的intent
 		filter.addAction("cn.jpush.android.intent.NOTIFICATION_OPENED");// 用户打开自定义通知栏的intent
 		filter.addCategory("com.findcab");
-		
-		getApplicationContext().registerReceiver(myreceiver, filter); // 注册
+		getApplicationContext().registerReceiver(MyReceiver, filter); // 注册
 
 	}
 
 	/**
 	 * 自定义广播,动态注册
 	 */
-	private BroadcastReceiver myreceiver = new BroadcastReceiver() {
+	private BroadcastReceiver MyReceiver = new BroadcastReceiver() {
 		private static final String TAG = "MyReceiver";
 
+		// Bundle[{cn.jpush.android.NOTIFICATION_CONTENT_TITLE=天天打车—司机,
+		// cn.jpush.android.NOTIFICATION_ID=149881293,
+		// cn.jpush.android.ALERT=conversations}]
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Bundle bundle = intent.getExtras();
-			MyLogTools.e(TAG, "onReceive - " + intent.getAction()
-					+ ", extras: " + printBundle(bundle));
 
-			if (JPushInterface.ACTION_REGISTRATION_ID
-					.equals(intent.getAction())) {
-				String regId = bundle
-						.getString(JPushInterface.EXTRA_REGISTRATION_ID);
-				MyLogTools.e(TAG, "接收Registration Id : " + regId);
-				// send the Registration Id to your server...
-			} else if (JPushInterface.ACTION_UNREGISTER.equals(intent
-					.getAction())) {
-				String regId = bundle
-						.getString(JPushInterface.EXTRA_REGISTRATION_ID);
-				MyLogTools.e(TAG, "接收UnRegistration Id : " + regId);
-				// send the UnRegistration Id to your server...
-			} else if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(intent
-					.getAction())) {
-				MyLogTools
-						.e(TAG,
-								"接收到推送下来的自定义消息: "
-										+ bundle.getString(JPushInterface.EXTRA_MESSAGE));
+			if (bundle.containsKey("cn.jpush.android.ALERT")) {
+				MyLogTools.e(
+						TAG,
+						"接收到推送下来的自定义消息: "
+						+ bundle.getString("cn.jpush.android.ALERT"));
 
 				// 判断收到消息内容
 				refreshViewByJPushInfo(bundle
-						.getString(JPushInterface.EXTRA_MESSAGE));
-
-			} else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED
-					.equals(intent.getAction())) {
-				MyLogTools.e(TAG, "接收到推送下来的通知");
-				int notifactionId = bundle
-						.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
-				MyLogTools.e(TAG, "接收到推送下来的通知的ID: " + notifactionId);
-
-			} else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent
-					.getAction())) {
-				MyLogTools.e(TAG, "用户点击打开了通知");
-
-				// //打开自定义的Activity
-				// Intent i = new Intent(context, WelcomActivity.class);
-				// i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				// context.startActivity(i);
-				MyLogTools.e("收到广播", "");
-
-			} else {
-				MyLogTools.e(TAG, "Unhandled intent - " + intent.getAction());
+						.getString("cn.jpush.android.ALERT"));
 			}
 
 		}
@@ -1930,6 +1853,7 @@ public class LocationOverlay extends Activity implements OnClickListener,
 	// 3,passagers_change
 	private void refreshViewByJPushInfo(String text) {
 		if (text.equals("conversations")) {
+			Log.e("收到推送", "conversations");
 			handlerMain.sendEmptyMessage(MESSAGE_CONVERSATIONS_CHANGE);
 		} else if (text.equals("drivers")) {
 			handlerMain.sendEmptyMessage(MESSAGE_DRIVERS_CHANGE);
@@ -1952,11 +1876,11 @@ class OverlayTest extends ItemizedOverlay<OverlayItem> {
 		pop = new PopupOverlay(LocationOverlay.mMapView,
 				new PopupClickListener() {
 
-					@Override
-					public void onClickedPopup() {
-						MyLogTools.d("hjtest  ", "clickpop");
-					}
-				});
+			@Override
+			public void onClickedPopup() {
+				MyLogTools.d("hjtest  ", "clickpop");
+			}
+		});
 		populate();
 
 	}
