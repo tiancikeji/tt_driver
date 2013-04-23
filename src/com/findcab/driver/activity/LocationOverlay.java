@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -18,7 +19,6 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -27,23 +27,25 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 import cn.jpush.android.api.JPushInterface;
+
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -99,8 +101,11 @@ BDLocationListener, SynthesizerPlayerListener {
 	// 播放进度
 	private int mPercentForPlaying = 0;
 
+    private ImageView image1,image2,image3,image4,image5;
+    private TextView text1,text2,text3;
 	protected int count = 0;
-	private int biao, lubiao = 0;
+	private int biao;//是否
+	private int lubiao = 0;
 	public static MapView mMapView = null;
 	// LocationListener mLocationListener = null;
 	public Context context;
@@ -108,7 +113,7 @@ BDLocationListener, SynthesizerPlayerListener {
 	String mStrKey = "8BB7F0E5C9C77BD6B9B655DB928B74B6E2D838FD";
 	BMapManager mBMapMan = null;
 	List<GeoPoint> pList;
-	TripsInfo tripsInfo = null;
+	TripsInfo tripsInfo = null;//用来保存当前显示路线信息
 	private Button btn_request, btn_refurbish, btn_road;
 	private LinearLayout linear_called;
 	private LinearLayout linear;
@@ -119,9 +124,9 @@ BDLocationListener, SynthesizerPlayerListener {
 	MapController mapController;
 
 	private ConversationInfo conversationInfo;
-	// private Button answer;
+//  private Button answer;
 	private GeoPoint pt;
-	Location location;
+//	Location location;
 
 	private int lat;
 	private int lng;
@@ -130,7 +135,7 @@ BDLocationListener, SynthesizerPlayerListener {
 	private double latOnwer;
 	private double lngOnwer;
 
-	private List<PassengerInfo> listInfo;
+	private List<PassengerInfo> listPassengerInfo;
 	public Bundle bundle;
 	private DriverInfo info;
 	private OwnerInfo ownerInfo;
@@ -145,11 +150,11 @@ BDLocationListener, SynthesizerPlayerListener {
 	private LinearLayout linear_left;
 	private LinearLayout line1, line2;
 
-	private Button linear_call, linear_already, finish, btn_call;
+	private Button linear_call, linear_already, btn_call;
 	// private Button locate;
 	private String androidDevice;
-	List<ConversationInfo> list = new ArrayList<ConversationInfo>();
-	private int count2;
+	List<ConversationInfo> listConversationInfo = new ArrayList<ConversationInfo>();
+//	private int count2;
 	private String id;
 	private LocationClient mLocClient;
 	// 存放overlayitem
@@ -157,7 +162,9 @@ BDLocationListener, SynthesizerPlayerListener {
 	private String name;
 	private String password;
 	protected String error;
-	private boolean isStartCount = true, isWaiting = false;// 控制是否启动倒数线程。只启动一次线程就好的
+	private boolean isStartCount = true;
+	private boolean isWaiting =false;
+	private boolean isMyconversationRun=true;// 控制是否启动倒数线程。只启动一次线程就好的
 	private final int WAITING = 60;
 	private int waitingTime = WAITING;
 
@@ -185,6 +192,9 @@ BDLocationListener, SynthesizerPlayerListener {
 	static final int MESSAGE_DRIVERS_CHANGE = 10002;
 	static final int MESSAGE_PASSAGERS_CHANGE = 10003;
 
+//	private int countbiao=0;
+	TelephonyManager manager ; 
+
 	// 处理所有LocationOverlay类中的handler异步处理
 	Handler handlerMain = new Handler() {
 
@@ -195,6 +205,7 @@ BDLocationListener, SynthesizerPlayerListener {
 				Toast.makeText(context, "会话更新", Toast.LENGTH_SHORT).show();
 				Log.e("刷新会话", "会话更新");
 				getConversations();
+				
 				break;
 			case MESSAGE_DRIVERS_CHANGE:
 				Toast.makeText(context, "附近司机更新", Toast.LENGTH_SHORT).show();
@@ -215,6 +226,7 @@ BDLocationListener, SynthesizerPlayerListener {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFormat(PixelFormat.RGBA_8888);
 		context = getApplicationContext();
+		
 		// 获取前一个activity传入的用户名密码（这里要修改）应保存起来
 		bundle = this.getIntent().getExtras();
 		name = bundle.getString("name");
@@ -238,6 +250,7 @@ BDLocationListener, SynthesizerPlayerListener {
 		MD5 md5 = new MD5();
 		map.put("driver[mobile]", name);
 		map.put("driver[password]", md5.getMD5ofStr(password));
+//		hide();
 		// String result = HttpTools.PostDate(
 		// Constant.DRIVERS_SIGNIN, map);
 		// 登陆
@@ -275,6 +288,9 @@ BDLocationListener, SynthesizerPlayerListener {
 		// 设置设备别名，以用户名为别名，（最终要实现当用户换账号时，别名改变）
 		MyJpushTools.setAlias(context, "driver_" + info.getId());
 		MyLogTools.e("别名", "driver_" + info.getId());
+		
+		//第一次进入程序，获取数据
+		getConversations();
 	}
 
 	@Override
@@ -412,13 +428,13 @@ BDLocationListener, SynthesizerPlayerListener {
 		case R.id.linear_btcalled:
 			String moble = null;
 
-			if (listInfo != null) {
+			if (listPassengerInfo != null) {
 
-				for (int i = 0; i < listInfo.size(); i++) {
+				for (int i = 0; i < listPassengerInfo.size(); i++) {
 
-					if (listInfo.get(i).getId() == conversationInfo
+					if (listPassengerInfo.get(i).getId() == conversationInfo
 							.getFrom_id()) {
-						moble = listInfo.get(i).getMobile();
+						moble = listPassengerInfo.get(i).getMobile();
 					}
 
 				}
@@ -445,6 +461,9 @@ BDLocationListener, SynthesizerPlayerListener {
 			id = String.valueOf(conversationInfo.getId());
 			changeConversationsStatus("4", id);
 			isAnswer = false;
+			
+			//获取新的会话
+			
 			break;
 		case R.id.locate:
 			count = 0;
@@ -473,7 +492,7 @@ BDLocationListener, SynthesizerPlayerListener {
 		new Thread(new Runnable() {
 			@SuppressWarnings("unchecked")
 			public void run() {
-
+				
 				while (ispassengersrun) {
 
 					try {
@@ -488,13 +507,14 @@ BDLocationListener, SynthesizerPlayerListener {
 						+ "&passenger[lat]=" + String.valueOf(latOnwer)
 						+ "&passenger[lng]=" + String.valueOf(lngOnwer);
 
-						listInfo = (List<PassengerInfo>) HttpTools.getAndParse(
+						listPassengerInfo = (List<PassengerInfo>) HttpTools.getAndParse(
 								Constant.DRIVERS_PASSENGERS, map1,
 								new PassengersHandler());
 
-						if (listInfo != null && listInfo.size() > 0) {
-							// isRun = true;
-							messageHandler.sendEmptyMessage(Constant.SUCCESS);
+						if (listPassengerInfo != null && listPassengerInfo.size() > 0) {
+							// 李吉喆改，地图上只表示会话列表中的乘客位置，所以去刷新Constant.CHANGE2
+							messageHandler.sendEmptyMessage(Constant.SUCCESS);//此消息没做处理
+//							messageHandler.sendEmptyMessage(Constant.CHANGE2);
 						} else {
 							// MyLogTools.e("获取附近乘客失败", "无乘客数据");
 							messageHandler.sendEmptyMessage(Constant.FAILURE);
@@ -533,12 +553,20 @@ BDLocationListener, SynthesizerPlayerListener {
 					String result = (String) HttpTools.getAndParse(
 							Constant.TRIPS, trip_id + "", new BaseHandler());
 					JSONObject object = new JSONObject(result);
+					
 					tripsInfo = new TripsInfo(object.getJSONObject("trip"));
 					// System.out.println(tripsInfo.getStart());
 					tripsList.add(tripsInfo);
 					// System.out.println("getTrip------>" + result);
+					
+//					//李吉喆 ==判断获取到的路线是否是当前会话的路线信息，如果是则单独保存
+//					if(conversationInfo.getId() == info.getId()){
+//						tripsInfo = info;
+//					}
+					
+					//得到发布路线，这里处理的不对
 					if (result != null) {
-
+						
 						requestMessage.sendEmptyMessage(Constant.SUCCESS);
 					}
 
@@ -568,39 +596,44 @@ BDLocationListener, SynthesizerPlayerListener {
 			public void run() {
 				String map1 = null;
 				try {
-					for (int i = 0; i < list.size(); i++) {
-						if (list.get(i).getStatus() != 0)
-							list.remove(i);
+					for (int i = 0; i < listConversationInfo.size(); i++) {
+						if (listConversationInfo.get(i).getStatus() != 0)
+							listConversationInfo.remove(i);
 
 					}
 					map1 = "[to_id=" + String.valueOf(info.getId()) + "]";
 					if (!isAnswer) {
 						MyLogTools.e("LocationOverlay-getConversation()", "1");
-						list = (List<ConversationInfo>) HttpTools.getAndParse(
+						listConversationInfo = (List<ConversationInfo>) HttpTools.getAndParse(
 								Constant.CONVERSATIONS, map1,
 								new ConversationsHandler());
 
 					} else {
 						MyLogTools.e("LocationOverlay-getConversation()", "2");
-						if (list != null) {
-							list = (List<ConversationInfo>) HttpTools
+						if (listConversationInfo != null) {
+							listConversationInfo = (List<ConversationInfo>) HttpTools
 							.getAndParse(Constant.CONVERSATIONS, map1,
 									new ConversationsHandler());
 						}
 
 					}
-
-					if (list.size() > 0) {
-						for (int i = 0; i < list.size(); i++) {
-							conversationInfo = list.get(i);
+					
+					if (listConversationInfo.size() > 0) {
+						MyLogTools.e("获取回话列表成功", "列表 ="+listConversationInfo.size());
+//						show();
+						for (int i = 0; i < listConversationInfo.size(); i++) {
+							conversationInfo = listConversationInfo.get(i);
 
 							int Status = conversationInfo.getStatus();
+							
+							//这个消息发送出去，在handler里面没做处理
 							messageHandler.sendEmptyMessage(Constant.CHANGE1);
 
 							if (Status == 0 && !isAnswer) {
 								trip_id = conversationInfo.getTrip_id();
 
 								getTrip(trip_id);
+								
 							} else if (Status == -1 && isAnswer) {
 								giveupHandler
 								.sendEmptyMessage(Constant.SUCCESS);
@@ -608,28 +641,76 @@ BDLocationListener, SynthesizerPlayerListener {
 							} else if (Status == 3 && isAnswer) {
 								giveupHandler
 								.sendEmptyMessage(Constant.SUCCESS);
-								count2++;
+//								count2++;
 							}
 						}
 					} else {
 						messageHandler.sendEmptyMessage(Constant.CHANGE);
-
+////						hide();//无数据，隐藏
+//						//当获取数据为空时 ，清空当前tripInfo
+//						tripsInfo = null;
+						
 					}
 
-					try {
-						Thread.sleep(60000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//					try {
+//						Thread.sleep(60000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 				} catch (Exception e) {
 					// TODO: handle exception
 					e.printStackTrace();
 				}
 				messageHandler.sendEmptyMessage(Constant.CHANGE2);
+				
 			}
 		}).start();
 	}
+
+	//	private void getMyconversations(){
+	//		new Thread(new Runnable() {
+	//
+	//			public void run() {
+	//				 int map1;
+	//				 ConversationInfo ConversationInfo1=null;
+	//				while(isMyconversationRun) {     
+	//					map1=conversationInfo.getId();
+	//					ConversationInfo1 = (ConversationInfo) HttpTools
+	//							.getAndParse(Constant.CONVERSATIONS1, map1,
+	//									new ConversationHandler1());
+	//					 if(ConversationInfo1.getStatus()==4){
+	//					isMyconversationRun=false;
+	//					messageHandler
+	//					.sendEmptyMessage(Constant.FINISH);
+	//				  }
+	//					 //取消订单是第二版功能
+	////					 else if(ConversationInfo1.getStatus()==-1){
+	////						isMyconversationRun=false;
+	////						messageHandler
+	////						.sendEmptyMessage(Constant.QUXIAO);
+	////					}
+	//					 
+	//					 
+	////					else if(ConversationInfo1.getStatus()==4){
+	////						isMyconversationRun=false;
+	////						messageHandler
+	////						.sendEmptyMessage(Constant.FINISH);
+	////					}
+	//					
+	//					try {
+	//						Thread.sleep(5000);
+	//					} catch (InterruptedException e) {
+	//						// TODO Auto-generated catch block
+	//						e.printStackTrace();
+	//					}
+	//				}
+	//			
+	//				}
+	//		
+	//	}).start();
+	//	}
+
 
 	/**
 	 * 更新会话状态
@@ -793,12 +874,12 @@ BDLocationListener, SynthesizerPlayerListener {
 							// System.out.println("message--->"
 							// + jsonObject.getString("message"));
 
-//							// 退出登录后要清楚缓存
-//							SharedPreferences share = getSharedPreferences(
-//									"data", 0);
-//							Editor editor = share.edit();
-//							editor.clear();
-//							editor.commit();
+							//							// 退出登录后要清楚缓存
+							//							SharedPreferences share = getSharedPreferences(
+							//									"data", 0);
+							//							Editor editor = share.edit();
+							//							editor.clear();
+							//							editor.commit();
 
 							exitPro(context);
 							finish();
@@ -829,6 +910,20 @@ BDLocationListener, SynthesizerPlayerListener {
 		// new Plysounds(context).synthetizeInSilence("你有一条从"
 		// + tripsInfo.getStart() + "到" + tripsInfo.getEnd() + "搭车请求！");
 
+		//李吉喆加入，显示订单信息
+		for(int i = 0; i < tripsList.size();i++){
+			if(tripsList.get(i).getId() == conversationInfo.getId()){
+				starTextView.setText(tripsInfo.getStart());
+				endTextView.setText(tripsInfo.getEnd());
+				if (tripsInfo.getAppointment().equals(null)) {
+					money.setText(0);
+					distant.setText("不详");
+				} else {
+					money.setText(tripsInfo.getAppointment());
+					distant.setText(tripsInfo.getAppointment());
+				}
+			}
+		}
 	}
 
 	/**
@@ -836,8 +931,23 @@ BDLocationListener, SynthesizerPlayerListener {
 	 */
 	private void showNorm() {
 		MyLogTools.e("LocationOnverlay", "showNorm()");
-		// layout_instruction.setVisibility(View.GONE);
-		// answer.setVisibility(View.VISIBLE);
+//		 layout_instruction.setVisibility(View.GONE);
+//		 answer.setVisibility(View.VISIBLE);
+		
+		//李吉喆加入，显示订单信息
+		for(int i = 0; i < tripsList.size();i++){
+			if(tripsList.get(i).getId() == conversationInfo.getId()){
+				starTextView.setText(tripsInfo.getStart());
+				endTextView.setText(tripsInfo.getEnd());
+				if (tripsInfo.getAppointment().equals(null)) {
+					money.setText(0);
+					distant.setText("不详");
+				} else {
+					money.setText(tripsInfo.getAppointment());
+					distant.setText(tripsInfo.getAppointment());
+				}
+			}
+		}
 	}
 
 	/**
@@ -845,8 +955,21 @@ BDLocationListener, SynthesizerPlayerListener {
 	 */
 	private void showAnswer() {
 		MyLogTools.e("LocationOnverlay", "showAnswer()");
+		//李吉喆加入，显示订单信息
+		for(int i = 0; i < tripsList.size();i++){
+			if(tripsList.get(i).getId() == conversationInfo.getId()){
+				starTextView.setText(tripsInfo.getStart());
+				endTextView.setText(tripsInfo.getEnd());
+				if (tripsInfo.getAppointment().equals(null)) {
+					money.setText(0);
+					distant.setText("不详");
+				} else {
+					money.setText(tripsInfo.getAppointment());
+					distant.setText(tripsInfo.getAppointment());
+				}
+			}
+		}
 		
-
 	}
 
 	Handler messageHandler = new Handler() {
@@ -864,16 +987,11 @@ BDLocationListener, SynthesizerPlayerListener {
 				// linear_time.setVisibility(View.GONE);
 				break;
 			case Constant.CHANGE2:
-				MyLogTools.e("LocationOnverlay",
-				"messageHandler-Constant.CHANGE2");
-				// new Plysounds(context).synthetizeInSilence("你有一条从"
-				// + tripsInfo.getStart() + "到" + tripsInfo.getEnd() + "搭车请求！");
-				//
-
+				MyLogTools.e("LocationOnverlay","messageHandler-Constant.CHANGE2");
 				List<Overlay> list1 = mMapView.getOverlays();
 				list1.clear();
 				Drawable marker = getResources().getDrawable(
-						R.drawable.iconmarka); // �õ���Ҫ���ڵ�ͼ�ϵ���Դ
+						R.drawable.iconmarka); 
 				marker.setBounds(0, 0, marker.getIntrinsicWidth(),
 						marker.getIntrinsicHeight());
 
@@ -882,9 +1000,9 @@ BDLocationListener, SynthesizerPlayerListener {
 					mGeoList.remove(i);
 				}
 				// 这里是打补丁，不应该在这里来处理数据不存在情况！
-				if (listInfo != null && listInfo.size() != 0 && list != null
-						&& list.size() > 0) {
-					int size = listInfo.size();
+				if (listPassengerInfo != null && listPassengerInfo.size() != 0 && listConversationInfo != null
+						&& listConversationInfo.size() > 0) {
+					int size = listPassengerInfo.size();
 					OverlayItem item = null;
 					int lat, lng;
 					PassengerInfo info;
@@ -892,11 +1010,11 @@ BDLocationListener, SynthesizerPlayerListener {
 					Drawable maker = getResources().getDrawable(
 							R.drawable.passenger);
 					for (int i = 0; i < size; i++) {
-						info = listInfo.get(i);
+						info = listPassengerInfo.get(i);
 
 						// 获取有请求的乘客
-						for (int j = 0; j < list.size(); j++) {
-							cinfo = list.get(j);
+						for (int j = 0; j < listConversationInfo.size(); j++) {
+							cinfo = listConversationInfo.get(j);
 							if (info.getId() == cinfo.getFrom_id()) {
 								lat = (int) (info.getLat() * 1e6);
 								lng = (int) (info.getLng() * 1e6);
@@ -912,61 +1030,73 @@ BDLocationListener, SynthesizerPlayerListener {
 					}
 					mGeoList.size();
 
-					// OverlayTest ov = new OverlayTest(marker, context);
-					// for(OverlayItem item1 : mGeoList){
-					// ov.addItem(item1);
-					// }
-					// mMapView.getOverlays().add(ov);
-					// mMapView.postInvalidate();
-					// mMapView.refresh();
-					// mMapView.getController().setCenter(new
-					// GeoPoint(cLat,cLon));
 					MyItemizedOverlay overlay = new MyItemizedOverlay(context,
 							maker, mGeoList);
-					// for(OverlayItem item1 : mGeoList){
-					// overlay.addItem(item1);
-					// }
-					// mMapView.getOverlays().clear();
 					mMapView.getOverlays().add(overlay);
 					mMapView.postInvalidate();
 					mMapView.refresh();
 
 				} else {
 					// 无乘客数据
-
+					MyLogTools.e("测试乘客数据是否存在", "无乘客数据");
 				}
+				
 				// 目前先判断路线信息是否存在，这里不晚上，以后会修改
 				if (tripsInfo != null && tripsInfo.getStart() != null) {
-					synthetizeInSilence("你有一条从" + tripsInfo.getStart() + "到"
-							+ tripsInfo.getEnd() + "搭车请求！");
+						synthetizeInSilence("你有一条从" + tripsInfo.getStart() + "到"
+								+ tripsInfo.getEnd() + "搭车请求！");
+//						show();
+						linear_left.setVisibility(View.VISIBLE);
+						btn_request.setText(listConversationInfo.size() + "条新的未读打车请求");
+						// btn_request.setVisibility(View.GONE);
+						if (biao == 0){
+							btn_call.setVisibility(View.VISIBLE);
+						}
+						starTextView.setText(tripsInfo.getStart());
+						endTextView.setText(tripsInfo.getEnd());
+						if (tripsInfo.getAppointment().equals(null)) {
+							money.setText(0);
+							distant.setText("不详");
+						} else {
+							money.setText(tripsInfo.getAppointment());
+							distant.setText(tripsInfo.getAppointment());
+						}
+						//此处没有用到
+//						showNewMessage();
+						//http://42.96.164.29:80/api/trips/68
 
-					linear_left.setVisibility(View.VISIBLE);
-					btn_request.setText(list.size() + "条新的未读打车请求");
-					// btn_request.setVisibility(View.GONE);
-					if (biao == 0)
-						btn_call.setVisibility(View.VISIBLE);
-					starTextView.setText(tripsInfo.getStart());
-					endTextView.setText(tripsInfo.getEnd());
-					if (tripsInfo.getAppointment().equals(null)) {
-						money.setText(0);
-						distant.setText("不详");
-					} else {
-						money.setText(tripsInfo.getAppointment());
-						distant.setText(tripsInfo.getAppointment());
-					}
-
-					// tripsList.add(tripsInfo);
-					showNewMessage();
-					isWaiting = true;
-					// isStartCount = true;
-					waitingTime = WAITING;
-					countBackwards();
+//						//判断是否还有打车请求，如果有，则继续倒计时（这里有漏洞，倒计时不应改在这里显示，应该把倒计时和显示trip信息放到一起）
+//						if(tripsList.size() >0){
+//							MyLogTools.e("change2-if", ""+tripsList.size());
+							isWaiting = true;
+							waitingTime = WAITING;
+							countBackwards();
+//						}else{
+//							MyLogTools.e("change2-else", ""+tripsList.size());
+//						}
+							
+							
+//						if(countbiao==0)
+//							countBackwards();
+					
 				} else {
 					// 无路线信息
 					MyLogTools.e("测试路线数据是否存在", "无数据");
+					btn_request.setText("0条新的未读打车请求");
+					starTextView.setText("");
+					endTextView.setText("");
+					money.setText("");
+					distant.setText("");
+					texttime.setText("");
+					btn_call.setVisibility(View.GONE);
 				}
 
-				// isStartCount = false;
+//				//判断是否有需要显示的打车请求
+//				if(conversationInfo != null){
+//					show();
+//				}else{
+//					hide();
+//				}
 				break;
 
 			case Constant.CHANGE:
@@ -983,8 +1113,8 @@ BDLocationListener, SynthesizerPlayerListener {
 				// linear_time.setVisibility(View.GONE);
 				break;
 			case Constant.SUCCESS:
-				MyLogTools.e("LocationOnverlay",
-				"messageHandler-Constant.SUCCESS");
+//				MyLogTools.e("LocationOnverlay","messageHandler-Constant.SUCCESS");
+				
 				// Toast.makeText(context, "youchengke",
 				// Toast.LENGTH_SHORT).show();
 				// List<Overlay> list1 = mMapView.getOverlays();
@@ -1066,7 +1196,24 @@ BDLocationListener, SynthesizerPlayerListener {
 			switch (msg.what) {
 
 			case Constant.SUCCESS:
-
+				//李吉喆加入，显示订单信息
+//				for(int i = 0; i < tripsList.size();i++){
+//					if(tripsList.get(i).getId() == conversationInfo.getId()){
+					if(tripsInfo.getId() == conversationInfo.getId()){
+						starTextView.setText(tripsInfo.getStart());
+						endTextView.setText(tripsInfo.getEnd());
+						if (tripsInfo.getAppointment().equals(null)) {
+							money.setText(0);
+							distant.setText("不详");
+						} else {
+							money.setText(tripsInfo.getAppointment());
+							distant.setText(tripsInfo.getAppointment());
+						}
+						isWaiting = true;
+						waitingTime = WAITING;
+						countBackwards();
+					}
+//				}
 				break;
 			case Constant.FAILURE:
 				linear_left.setVisibility(View.GONE);
@@ -1321,6 +1468,11 @@ BDLocationListener, SynthesizerPlayerListener {
 
 	private void initView() {
 		MyLogTools.e("LocationOnverlay", "initView2()");
+
+		//打电话
+		manager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE); 
+		manager.listen(new PhoneCallListener(), PhoneStateListener.LISTEN_CALL_STATE); 
+
 		androidDevice = Tools.getDeviceId(context);
 		mMapView = (MapView) findViewById(R.id.bmapView);
 		linear_left = (LinearLayout) findViewById(R.id.linear_left);
@@ -1341,6 +1493,15 @@ BDLocationListener, SynthesizerPlayerListener {
 		linear_already.setOnClickListener(this);
 		linear = (LinearLayout) findViewById(R.id.linear);
 		listView = (ListView) findViewById(R.id.listView);
+		image1=(ImageView)findViewById(R.id.imageViewstart);
+		image2=(ImageView)findViewById(R.id.imageViewend);
+		image3=(ImageView)findViewById(R.id.imageViewdistend);
+		image4=(ImageView)findViewById(R.id.imageViewmoney);
+		image5=(ImageView)findViewById(R.id.imageViewtime);
+		text1=(TextView)findViewById(R.id.textViewwenzi1);
+		text2=(TextView)findViewById(R.id.textViewwenzi2);
+		text3=(TextView)findViewById(R.id.textViewwenzi3);
+		
 
 		linear_time = (LinearLayout) findViewById(R.id.linear_time);
 		starTextView = (TextView) findViewById(R.id.textstart);
@@ -1409,9 +1570,11 @@ BDLocationListener, SynthesizerPlayerListener {
 				endTextView.setText(tripsList.get(arg2).getEnd());
 				distant.setText(tripsList.get(arg2).getAppointment());
 				money.setText(tripsList.get(arg2).getAppointment());
-				conversationInfo = list.get(arg2);
+				conversationInfo = listConversationInfo.get(arg2);
 				conversationInfo.getFrom_id();
 				biao = 0;
+				synthetizeInSilence("你有一条从" + tripsInfo.getStart() + "到"
+						+ tripsInfo.getEnd() + "搭车请求！");
 			}
 
 		});
@@ -1419,36 +1582,70 @@ BDLocationListener, SynthesizerPlayerListener {
 
 	}
 
+
+	private class PhoneCallListener extends PhoneStateListener {
+		private boolean bphonecalling = false;
+
+		@Override
+		public void onCallStateChanged(int state, String incomingnumber) {
+			// seems the incoming number is this call back always ""
+			if (TelephonyManager.CALL_STATE_OFFHOOK == state) {
+				bphonecalling = true;
+			} else if (TelephonyManager.CALL_STATE_IDLE == state
+					&& bphonecalling) {
+				//	                if (manager != null) {
+				//	                	manager.listen(mPhoneCallListener,
+				//	                            PhoneStateListener.LISTEN_NONE);
+				//	                }
+				bphonecalling = false; 
+
+				//	                Intent i = getPackageManager().getLaunchIntentForPackage(
+				//	                        getPackageName());
+				Intent intent=new Intent();  
+
+				intent.setClass(LocationOverlay.this,LocationOverlay.class);  
+				startActivity(intent);  
+
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+						| Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				startActivity(intent);
+			}
+			super.onCallStateChanged(state, incomingnumber);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	public void onClick2(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.linear_already: // 乘客上车
 			// linear_left.setVisibility(View.GONE);
 			// showNorm();
+			//这里id获取不到，可能是清空conversationInfo导致
 			id = String.valueOf(conversationInfo.getId());
 			changeConversationsStatus("4", id);//4代表乘客以上车
 			conversationInfo.setStatus(4);
 			conversationInfo = null;
-			
+
 			isAnswer = false;
 
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getStatus() != 0)
-					list.remove(i);
+			for (int i = 0; i < listConversationInfo.size(); i++) {
+				if (listConversationInfo.get(i).getStatus() != 0)
+					listConversationInfo.remove(i);
 
 			}
 
-			// isRun=true;
-			// getConversations();
 			biao = 0;
 			btn_request.setVisibility(View.VISIBLE);
-			btn_request.setText(list.size() + "条新的未读打车请求");
+			btn_request.setText(listConversationInfo.size() + "条新的未读打车请求");
 			btn_call.setVisibility(View.VISIBLE);
 			linear_time.setVisibility(View.VISIBLE);
 			linear_called.setVisibility(View.GONE);
 			tripsList.clear();
 			isWaiting = false;
 			// isStartCount = true;
+			
+//			countbiao=0;
 			getPassengers();
 			getConversations();
 			starTextView.setText(tripsInfo.getStart());
@@ -1463,38 +1660,43 @@ BDLocationListener, SynthesizerPlayerListener {
 
 			break;
 		case R.id.btn_call:
-			for (int i = 0; i < list.size(); i++) {
-				if (list.get(i).getStatus() != 0)
-					list.remove(i);
+			for (int i = 0; i < listConversationInfo.size(); i++) {
+				if (listConversationInfo.get(i).getStatus() != 0)
+					listConversationInfo.remove(i);
 
 			}
 			ConversationInfo conversationInfo1 = null;
 			String map1 = "[to_id=" + String.valueOf(info.getId()) + "]";
 
-			list = (List<ConversationInfo>) HttpTools.getAndParse(
+			listConversationInfo = (List<ConversationInfo>) HttpTools.getAndParse(
 					Constant.CONVERSATIONS, map1, new ConversationsHandler());
 
 			int biaozhi = 1;
 			// if (conversationInfo != null) {
-			if (list.size() > 0) {
-				for (int i = 0; i < list.size(); i++) {
-					conversationInfo1 = list.get(i);
+			if (listConversationInfo.size() > 0) {
+				for (int i = 0; i < listConversationInfo.size(); i++) {
+					conversationInfo1 = listConversationInfo.get(i);
 
-					if (conversationInfo1.getFrom_id() == conversationInfo
-							.getFrom_id()) {
+					if (conversationInfo1.getFrom_id() == conversationInfo.getFrom_id()) {
 						biaozhi = 0;
 						if (conversationInfo1.getStatus() == 0) {
-							showCalledView();
+							
 							id = String.valueOf(conversationInfo1.getId());
 							changeConversationsStatus("1", id);
-							conversationInfo1.setStatus(4);
+							conversationInfo1.setStatus(1);
+							conversationInfo=conversationInfo1;
+							
+//							getTrip(conversationInfo1.getId());//当应答后，从新获取路线信息
+							
+							showCalledView();
+							
 							isWaiting = false;
 							waitingTime = 60;
 							// ispassengersrun=false;
 							// isRun=false;
-							// new
-							// Plysounds(context).synthetizeInSilence("应答成功，请尽快联系乘客");
 							synthetizeInSilence("应答成功，请尽快联系乘客");
+							isMyconversationRun=true;
+							//								getMyconversations();
 							break;
 							// ispassengersrun=true;
 							// isRun=true;
@@ -1506,7 +1708,9 @@ BDLocationListener, SynthesizerPlayerListener {
 							isWaiting = false;
 							synthetizeInSilence("订单已经取消");
 							tripsList.clear();
+							conversationInfo = null;
 							// isStartCount = true;
+//							countbiao=0;
 							getPassengers();
 							getConversations();
 							break;
@@ -1526,6 +1730,7 @@ BDLocationListener, SynthesizerPlayerListener {
 					synthetizeInSilence("订单已经取消");
 					// isStartCount = true;
 					tripsList.clear();
+//					countbiao=0;
 					getPassengers();
 					getConversations();
 				}
@@ -1535,6 +1740,7 @@ BDLocationListener, SynthesizerPlayerListener {
 				synthetizeInSilence("订单已经取消");
 				// isStartCount = true;
 				tripsList.clear();
+//				countbiao=0;
 				getPassengers();
 				getConversations();
 			}
@@ -1581,7 +1787,7 @@ BDLocationListener, SynthesizerPlayerListener {
 
 			mapController.animateTo(new GeoPoint(lat, lng), null);
 			mMapView.refresh();
-
+//			countbiao=0;
 			getPassengers();
 			getConversations();
 			mapController.animateTo(new GeoPoint(lat, lng), null);
@@ -1589,7 +1795,6 @@ BDLocationListener, SynthesizerPlayerListener {
 			break;
 		case R.id.btn_road:
 			if (lubiao == 0) {
-
 				lubiao = 1;
 				mMapView.setTraffic(true);
 				mMapView.refresh();
@@ -1604,20 +1809,20 @@ BDLocationListener, SynthesizerPlayerListener {
 		case R.id.linear_btcalled:
 			String moble = null;
 
-			if (listInfo != null) {
+			if (listPassengerInfo != null) {
 
-				for (int i = 0; i < listInfo.size(); i++) {
+				for (int i = 0; i < listPassengerInfo.size(); i++) {
 
-					if (listInfo.get(i).getId() == conversationInfo
+					if (listPassengerInfo.get(i).getId() == conversationInfo
 							.getFrom_id()) {
-						moble = listInfo.get(i).getMobile();
+						moble = listPassengerInfo.get(i).getMobile();
 					}
 
 				}
 				id = String.valueOf(conversationInfo.getId());
 				changeConversationsStatus("4", id);
 				conversationInfo.setStatus(4);
-				Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"
+				Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:"
 						+ moble));
 				startActivity(intent);
 			}
@@ -1640,6 +1845,28 @@ BDLocationListener, SynthesizerPlayerListener {
 			break;
 		}
 	}
+	private void hide()
+	{
+		image1.setVisibility(View.GONE);
+		image2.setVisibility(View.GONE);
+		image3.setVisibility(View.GONE);
+		image4.setVisibility(View.GONE);
+		image5.setVisibility(View.GONE);
+		text1.setVisibility(View.GONE);
+		text2.setVisibility(View.GONE);
+		text3.setVisibility(View.GONE);
+	}
+	private void show()
+	{
+		image1.setVisibility(View.VISIBLE);
+		image2.setVisibility(View.VISIBLE);
+		image3.setVisibility(View.VISIBLE);
+		image4.setVisibility(View.VISIBLE);
+		image5.setVisibility(View.VISIBLE);
+		text1.setVisibility(View.VISIBLE);
+		text2.setVisibility(View.VISIBLE);
+		text3.setVisibility(View.VISIBLE);
+	}
 
 	/**
 	 * 倒计时
@@ -1650,7 +1877,7 @@ BDLocationListener, SynthesizerPlayerListener {
 
 		if (isStartCount) {
 			isStartCount = false;
-
+			
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -1662,6 +1889,7 @@ BDLocationListener, SynthesizerPlayerListener {
 							Message msg = new Message();
 							waitingTime--;
 							msg.what = WAITING;
+							MyLogTools.e("LocationOverlay-contBackwards", ""+waitingTime);
 							waitingHandler.sendMessage(msg);
 
 						} catch (InterruptedException e) {
@@ -1682,18 +1910,31 @@ BDLocationListener, SynthesizerPlayerListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case WAITING:
-				if (waitingTime >= 0) {
+				MyLogTools.e("LocationOverlay-waitingHandler", ""+waitingTime);
+//				if (waitingTime >= 0) {
+//					texttime.setText("" + waitingTime);
+//					break;
+//				} else if (waitingTime < 0) {
+//					//超时后，删除当前会话
+//					tripsInfo = null;
+//					conversationInfo = null;
+//					isWaiting = false;
+//					waitingTime = 60;
+//					showTimeOutDialog();
+//					break;
+//				} 
+				if (waitingTime > 0) {
 					texttime.setText("" + waitingTime);
 					break;
-				} else if (waitingTime < 0) {
-
+				} else if (waitingTime == 0) {
+					texttime.setText("" + waitingTime);
+					//超时后，删除当前会话
+					tripsInfo = null;
+					conversationInfo = null;
 					isWaiting = false;
 					waitingTime = 60;
 					showTimeOutDialog();
-					
 					break;
-				} else {
-
 				}
 
 			}
@@ -1707,7 +1948,12 @@ BDLocationListener, SynthesizerPlayerListener {
 	private void showTimeOutDialog() {
 		synthetizeInSilence("该订单已经超时");
 		tripsList.clear();
-		getPassengers();
+		tripsInfo = null;
+		conversationInfo = null;
+		messageHandler.sendEmptyMessage(Constant.CHANGE2);
+		
+//		countbiao=0;
+//		getPassengers();
 		getConversations();
 	}
 
@@ -1717,18 +1963,33 @@ BDLocationListener, SynthesizerPlayerListener {
 		biao = 1;
 		linear_time.setVisibility(View.GONE);
 		linear_called.setVisibility(View.VISIBLE);
-		id = String.valueOf(conversationInfo.getId());
-		changeConversationsStatus("1", id);
-		conversationInfo.setStatus(1);
+		
+		//李吉喆加入，显示订单信息
+		for(int i = 0; i < tripsList.size();i++){
+			if(tripsList.get(i).getId() == conversationInfo.getId()){
+				starTextView.setText(tripsInfo.getStart());
+				endTextView.setText(tripsInfo.getEnd());
+				if (tripsInfo.getAppointment().equals(null)) {
+					money.setText(0);
+					distant.setText("不详");
+				} else {
+					money.setText(tripsInfo.getAppointment());
+					distant.setText(tripsInfo.getAppointment());
+				}
+			}
+		}
+		
+//		id = String.valueOf(conversationInfo.getId());
+//		changeConversationsStatus("1", id);
+//		conversationInfo.setStatus(1);
 		tripsList.clear();
 		getPassengers();
-
 		getConversations();
 
 	}
 
 	private void showPassengerListView() {
-		if (list.size() > 0) {
+		if (listConversationInfo.size() > 0) {
 			listView.setVisibility(View.VISIBLE);
 			linear.setVisibility(View.GONE);
 			btn_request.setVisibility(View.GONE);
@@ -1865,66 +2126,66 @@ BDLocationListener, SynthesizerPlayerListener {
 	}
 }
 
-class OverlayTest extends ItemizedOverlay<OverlayItem> {
-	public List<OverlayItem> mGeoList = new ArrayList<OverlayItem>();
-	private Context mContext = null;
-	static PopupOverlay pop = null;
-
-	public OverlayTest(Drawable marker, Context context) {
-		super(marker);
-		this.mContext = context;
-		pop = new PopupOverlay(LocationOverlay.mMapView,
-				new PopupClickListener() {
-
-			@Override
-			public void onClickedPopup() {
-				MyLogTools.d("hjtest  ", "clickpop");
-			}
-		});
-		populate();
-
-	}
-
-	protected boolean onTap(int index) {
-		Drawable marker = this.mContext.getResources().getDrawable(
-				R.drawable.ic_launcher); // 得到需要标在地图上的资源
-		BitmapDrawable bd = (BitmapDrawable) marker;
-		Bitmap popbitmap = bd.getBitmap();
-		pop.showPopup(popbitmap, mGeoList.get(index).getPoint(), 32);
-		// int latspan = this.getLatSpanE6();
-		// int lonspan = this.getLonSpanE6();
-		Toast.makeText(this.mContext, mGeoList.get(index).getTitle(),
-				Toast.LENGTH_SHORT).show();
-		super.onTap(index);
-		return false;
-	}
-
-	public boolean onTap(GeoPoint pt, MapView mapView) {
-		if (pop != null) {
-			pop.hidePop();
-		}
-		super.onTap(pt, mapView);
-		return false;
-	}
-
-	@Override
-	protected OverlayItem createItem(int i) {
-		return mGeoList.get(i);
-	}
-
-	@Override
-	public int size() {
-		return mGeoList.size();
-	}
-
-	public void addItem(OverlayItem item) {
-		mGeoList.add(item);
-		populate();
-	}
-
-	public void removeItem(int index) {
-		mGeoList.remove(index);
-		populate();
-	}
-
-}
+//class OverlayTest extends ItemizedOverlay<OverlayItem> {
+//	public List<OverlayItem> mGeoList = new ArrayList<OverlayItem>();
+//	private Context mContext = null;
+//	static PopupOverlay pop = null;
+//
+//	public OverlayTest(Drawable marker, Context context) {
+//		super(marker);
+//		this.mContext = context;
+//		pop = new PopupOverlay(LocationOverlay.mMapView,
+//				new PopupClickListener() {
+//
+//			@Override
+//			public void onClickedPopup() {
+//				MyLogTools.d("hjtest  ", "clickpop");
+//			}
+//		});
+//		populate();
+//
+//	}
+//
+//	protected boolean onTap(int index) {
+//		Drawable marker = this.mContext.getResources().getDrawable(
+//				R.drawable.ic_launcher); // 得到需要标在地图上的资源
+//		BitmapDrawable bd = (BitmapDrawable) marker;
+//		Bitmap popbitmap = bd.getBitmap();
+//		pop.showPopup(popbitmap, mGeoList.get(index).getPoint(), 32);
+//		// int latspan = this.getLatSpanE6();
+//		// int lonspan = this.getLonSpanE6();
+//		Toast.makeText(this.mContext, mGeoList.get(index).getTitle(),
+//				Toast.LENGTH_SHORT).show();
+//		super.onTap(index);
+//		return false;
+//	}
+//
+//	public boolean onTap(GeoPoint pt, MapView mapView) {
+//		if (pop != null) {
+//			pop.hidePop();
+//		}
+//		super.onTap(pt, mapView);
+//		return false;
+//	}
+//
+//	@Override
+//	protected OverlayItem createItem(int i) {
+//		return mGeoList.get(i);
+//	}
+//
+//	@Override
+//	public int size() {
+//		return mGeoList.size();
+//	}
+//
+//	public void addItem(OverlayItem item) {
+//		mGeoList.add(item);
+//		populate();
+//	}
+//
+//	public void removeItem(int index) {
+//		mGeoList.remove(index);
+//		populate();
+//	}
+//
+//}

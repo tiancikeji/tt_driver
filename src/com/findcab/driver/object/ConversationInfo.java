@@ -22,6 +22,8 @@ public class ConversationInfo {
 	private String updated_at;
 	private int index;
 
+	private TripsInfo tripInfo = null;
+	
 	public ConversationInfo(JSONObject jObject) {
 
 		try {
@@ -120,6 +122,14 @@ public class ConversationInfo {
 
 	public void setTrip_id(int tripId) {
 		trip_id = tripId;
+	}
+	
+	public TripsInfo getTripInfo(){
+		return tripInfo;
+	}
+	
+	public void setTripsInfo(TripsInfo tripsInfo){
+		this.tripInfo = tripsInfo;
 	}
 
 }

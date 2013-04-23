@@ -15,6 +15,10 @@ public class Constant {
 	public static final int CHANGE1 = 555;
 	public static final int TRIPSUCCESS = 666;
 	public static final int CHANGE2=777;
+	
+	public static final int QUXIAO=888;
+//	public static final int FINISH=999;
+	
 //	public static final String BASEURL = "http://vissul.com:8989/api/";
 	public static final String BASEURL = "http://42.96.164.29:80/api/";
 
@@ -27,7 +31,7 @@ public class Constant {
 
 	public static final String SIGNOUT = BASEURL + "drivers/signout/?";// 获得路线
 
-	public static final String UPDATE = BASEURL + "drivers/?";// 获得路线
+	public static final String UPDATE = BASEURL + "drivers/";// 获得路线
 	
 	public static final String VERSION_ID= "1.0.0";//版本号
 	public static final String MY_IMEI = "";//手机imei,测试使用868652012752662

@@ -235,6 +235,7 @@ public class LandActivity extends Activity implements OnClickListener,BDLocation
 	 */
 	public void startMainActivity() {
 		Intent intent = new Intent(LandActivity.this, LocationOverlay.class);
+//		Intent intent = new Intent(LandActivity.this, MainMapActivity.class);
 		intent.putExtra("name", name);
 		intent.putExtra("password", password);
 		intent.putExtra("DriverInfo", info);

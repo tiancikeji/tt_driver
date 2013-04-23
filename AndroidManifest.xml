@@ -29,6 +29,10 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity
+            android:name="com.findcab.driver.activity.MainMapActivity"
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
             android:name="com.findcab.driver.activity.LandActivity"
             android:screenOrientation="landscape" >
         </activity>
