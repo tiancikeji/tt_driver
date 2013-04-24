@@ -1,9 +1,11 @@
 package com.findcab.driver.activity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,6 +122,7 @@ BDLocationListener, SynthesizerPlayerListener {
 	private ListView listView;
 	private LinearLayout linear_time;
 	List<TripsInfo> tripsList;
+	InfoAdapter myConversation_adapter;
 	int iZoom = 0;
 	MapController mapController;
 
@@ -557,6 +560,11 @@ BDLocationListener, SynthesizerPlayerListener {
 					tripsInfo = new TripsInfo(object.getJSONObject("trip"));
 					// System.out.println(tripsInfo.getStart());
 					tripsList.add(tripsInfo);
+
+					InfoAdapter adapter = new InfoAdapter(context, tripsList);
+					tripsList.size();
+					adapter.upDatas(tripsList);
+					listView.setAdapter(adapter);
 					// System.out.println("getTrip------>" + result);
 					
 //					//李吉喆 ==判断获取到的路线是否是当前会话的路线信息，如果是则单独保存
@@ -1493,6 +1501,10 @@ BDLocationListener, SynthesizerPlayerListener {
 		linear_already.setOnClickListener(this);
 		linear = (LinearLayout) findViewById(R.id.linear);
 		listView = (ListView) findViewById(R.id.listView);
+		
+		myConversation_adapter = new InfoAdapter(context, tripsList);
+		listView.setAdapter(myConversation_adapter);
+		
 		image1=(ImageView)findViewById(R.id.imageViewstart);
 		image2=(ImageView)findViewById(R.id.imageViewend);
 		image3=(ImageView)findViewById(R.id.imageViewdistend);
@@ -1872,10 +1884,12 @@ BDLocationListener, SynthesizerPlayerListener {
 	 * 倒计时
 	 */
 	private void countBackwards() {
-
 		// isWaiting = true;
+		//获取倒计时时间
+		getDateAfterFormat_(conversationInfo.getCreated_at());
 
 		if (isStartCount) {
+			
 			isStartCount = false;
 			
 			new Thread(new Runnable() {
@@ -1942,6 +1956,39 @@ BDLocationListener, SynthesizerPlayerListener {
 		}
 	};
 
+	/**
+	 * 获取当前时间
+	 */
+	private double getDateAfterFormat_(String create_at){
+		//2013-04-24 03:29:26 UTC
+		double countDownTime = 0;
+		String[] a = create_at.split(" ");//截取出年月日和时分秒
+		String[] b = a[0].split("-");//截取年月日
+		String[] c = a[1].split(":");//截取时分秒
+		
+		int year = Integer.valueOf(b[0]);
+		int month = Integer.valueOf(b[1]);
+		int day = Integer.valueOf(b[2]);
+		int hourOfDay = Integer.valueOf(c[0]);
+		int minute = Integer.valueOf(c[1]);
+		int second = Integer.valueOf(c[2]);
+		
+		Calendar calendar_create_at = Calendar.getInstance();
+		//月份-1是因为calendar中保存的月份是从0开始的
+		calendar_create_at.set(year, month-1, day, hourOfDay, minute, second);
+		
+		Calendar calendar_now = Calendar.getInstance();
+		calendar_now.set(calendar_now.get(Calendar.YEAR), calendar_now.get(Calendar.MONTH), calendar_now.get(Calendar.DAY_OF_MONTH), calendar_now.get(Calendar.HOUR_OF_DAY), calendar_now.get(Calendar.MINUTE), calendar_now.get(Calendar.SECOND));
+		calendar_now.set(Calendar.MILLISECOND, 0);
+		countDownTime = calendar_create_at.compareTo(calendar_now);
+		Toast.makeText(context, ":"+countDownTime, Toast.LENGTH_SHORT).show();
+		if(countDownTime>0){
+			return countDownTime;
+		}else{
+			return countDownTime;
+		}
+	}
+	
 	/**
 	 * 显示TimeOutDialog zhaochuan
 	 */
