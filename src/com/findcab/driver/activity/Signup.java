@@ -23,7 +23,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.findcab.R;
 import com.findcab.driver.object.DriverInfo;
@@ -32,6 +31,7 @@ import com.findcab.driver.util.HttpTools;
 import com.findcab.driver.util.MD5;
 import com.findcab.driver.util.RandomValidateCode;
 import com.findcab.driver.util.Tools;
+import com.findcab.mywidget.MyToast;
 
 /**
  * 注册
@@ -141,16 +141,18 @@ public class Signup extends Activity implements OnClickListener {
 				// 验证码匹配成功
 				if (!checkBox.isChecked()) {
 
-					Toast.makeText(Signup.this, "请确认是否已经阅读同意条款！",
-							Toast.LENGTH_SHORT).show();
+//					Toast.makeText(Signup.this, "请确认是否已经阅读同意条款！",
+//							Toast.LENGTH_SHORT).show();
+					MyToast toast = new MyToast(context,"请确认是否已经阅读同意条款！");
+					toast.startMyToast();
 					return;
 
 				}
 
 				if (!isComplete()) {
 
-					Toast.makeText(Signup.this, "请完整填写内容！", Toast.LENGTH_SHORT)
-							.show();
+					MyToast toast = new MyToast(context,"请完整填写内容！");
+					toast.startMyToast();
 					return;
 				}
 				postInfo();
@@ -275,14 +277,16 @@ public class Signup extends Activity implements OnClickListener {
 		// 判断GPS模块是否开启，如果没有则开启
 		if (!locationManager
 				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-			Toast.makeText(this, "GPS is not open,Please open it!",
-					Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "GPS is not open,Please open it!",
+//					Toast.LENGTH_SHORT).show();
+			MyToast toast = new MyToast(this,"GPS is not open,Please open it!");
+			toast.startMyToast();
 			Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 			startActivityForResult(intent, 0);
 
 			return false;
 		} else {
-			Toast.makeText(this, "GPS is ready", Toast.LENGTH_SHORT);
+//			Toast.makeText(this, "GPS is ready", Toast.LENGTH_SHORT);
 		}
 		return true;
 	}

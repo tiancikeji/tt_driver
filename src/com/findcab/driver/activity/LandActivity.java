@@ -32,6 +32,7 @@ import com.findcab.driver.util.Constant;
 import com.findcab.driver.util.HttpTools;
 import com.findcab.driver.util.MD5;
 import com.findcab.driver.util.Tools;
+import com.findcab.mywidget.MyToast;
 
 /**
  * 登陆
@@ -208,6 +209,7 @@ public class LandActivity extends Activity implements OnClickListener,BDLocation
 					pd.dismiss();
 				}
 				Tools.landDialog(context, "手机号码不能为空，请输入手机号", "登陆失败");
+				
 				butt_land.setEnabled(true);
 				break;
 

@@ -19,7 +19,6 @@ import com.findcab.driver.util.Constant;
 import com.findcab.driver.util.HttpTools;
 import com.findcab.driver.util.MD5;
 import com.findcab.driver.util.MyLogTools;
-import com.findcab.driver.util.Tools;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -102,28 +101,32 @@ public class WelcomActivity extends Activity implements BDLocationListener{
 		startLocation();
 		
 		// welcom_layout.startAnimation(animationset);
-		new Handler().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				Intent mainIntent = null;
-				if (isSignup()) {
-					//如用户已登录过，则loading时进行登录
-					land(name,password);
+		//判断联网
+		HttpTools.checkNetWork(this);
+		if(HttpTools.isNetworkAvailable(this)){
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					Intent mainIntent = null;
+					if (isSignup()) {
+						//如用户已登录过，则loading时进行登录
+						land(name,password);
+						
+//						mainIntent = new Intent(WelcomActivity.this,
+//								LocationOverlay.class);
 					
-//					mainIntent = new Intent(WelcomActivity.this,
-//							LocationOverlay.class);
-				
-				} else {
+					} else {
 
-					mainIntent = new Intent(WelcomActivity.this,
-							LandActivity.class);
-					startActivity(mainIntent);
-					finish();
+						mainIntent = new Intent(WelcomActivity.this,
+								LandActivity.class);
+						startActivity(mainIntent);
+						finish();
+					}
 				}
-			}
 
-		}, 1000);
+			}, 1000);
+		}
+		
 		
 	}
 

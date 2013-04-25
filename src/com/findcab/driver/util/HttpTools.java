@@ -34,6 +34,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.findcab.driver.handler.Ihandler;
+import com.findcab.mywidget.MyToast;
 
 /**
  * 网络交互
@@ -150,19 +151,22 @@ public class HttpTools {
 	public static boolean checkNetWork(final Context context) {
 		if (!isNetworkAvailable(context)) {
 
-			new AlertDialog.Builder(context)
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setTitle("网络连接错误").setMessage("请检查网络连接！")
-					.setPositiveButton("确定", new OnClickListener() {
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							Intent netIntent = new Intent(
-									"android.settings.WIRELESS_SETTINGS");
-							context.startActivity(netIntent);
-						}
-					}).show();
+			MyToast toast = new MyToast(context,"网络连接错误，请检查网络连接！");
+			toast.startMyToast();
+			
+//			new AlertDialog.Builder(context)
+//					.setIcon(android.R.drawable.ic_dialog_alert)
+//					.setTitle("网络连接错误").setMessage("请检查网络连接！")
+//					.setPositiveButton("确定", new OnClickListener() {
+//
+//						@Override
+//						public void onClick(DialogInterface dialog, int which) {
+//							// TODO Auto-generated method stub
+//							Intent netIntent = new Intent(
+//									"android.settings.WIRELESS_SETTINGS");
+//							context.startActivity(netIntent);
+//						}
+//					}).show();
 			return false;
 		}
 		return true;

@@ -81,6 +81,7 @@ import com.findcab.driver.util.MyItemizedOverlay;
 import com.findcab.driver.util.MyLogTools;
 import com.findcab.driver.util.Tools;
 import com.findcab.jpush.MyJpushTools;
+import com.findcab.mywidget.MyToast;
 import com.iflytek.speech.SpeechError;
 import com.iflytek.speech.SynthesizerPlayer;
 import com.iflytek.speech.SynthesizerPlayerListener;
@@ -205,16 +206,18 @@ BDLocationListener, SynthesizerPlayerListener {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MESSAGE_CONVERSATIONS_CHANGE:
-				Toast.makeText(context, "会话更新", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "会话更新", Toast.LENGTH_SHORT).show();
+				MyToast toast = new MyToast(context,"会话更新");
+				toast.startMyToast();
 				Log.e("刷新会话", "会话更新");
 				getConversations();
 				
 				break;
 			case MESSAGE_DRIVERS_CHANGE:
-				Toast.makeText(context, "附近司机更新", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "附近司机更新", Toast.LENGTH_SHORT).show();
 				break;
 			case MESSAGE_PASSAGERS_CHANGE:
-				Toast.makeText(context, "附近乘客更新", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "附近乘客更新", Toast.LENGTH_SHORT).show();
 				getPassengers();
 				break;
 
@@ -453,8 +456,9 @@ BDLocationListener, SynthesizerPlayerListener {
 					startActivity(intent);
 
 				} else {
-					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT)
-					.show();
+//					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT).show();
+					MyToast toast = new MyToast(context,"SIM卡没有或读取有误！");
+					toast.startMyToast();
 				}
 			}
 			break;
@@ -565,6 +569,7 @@ BDLocationListener, SynthesizerPlayerListener {
 					tripsList.size();
 					adapter.upDatas(tripsList);
 					listView.setAdapter(adapter);
+					
 					// System.out.println("getTrip------>" + result);
 					
 //					//李吉喆 ==判断获取到的路线是否是当前会话的路线信息，如果是则单独保存
@@ -1886,8 +1891,8 @@ BDLocationListener, SynthesizerPlayerListener {
 	private void countBackwards() {
 		// isWaiting = true;
 		//获取倒计时时间
-		getDateAfterFormat_(conversationInfo.getCreated_at());
-
+//		double times = getDateAfterFormat_(conversationInfo.getCreated_at());
+//		waitingTime = (int)times;
 		if (isStartCount) {
 			
 			isStartCount = false;
@@ -1937,10 +1942,10 @@ BDLocationListener, SynthesizerPlayerListener {
 //					showTimeOutDialog();
 //					break;
 //				} 
-				if (waitingTime > 0) {
+				if (waitingTime >= 0) {
 					texttime.setText("" + waitingTime);
 					break;
-				} else if (waitingTime == 0) {
+				} else if (waitingTime == -1) {
 					texttime.setText("" + waitingTime);
 					//超时后，删除当前会话
 					tripsInfo = null;
@@ -1961,17 +1966,19 @@ BDLocationListener, SynthesizerPlayerListener {
 	 */
 	private double getDateAfterFormat_(String create_at){
 		//2013-04-24 03:29:26 UTC
+		
 		double countDownTime = 0;
-		String[] a = create_at.split(" ");//截取出年月日和时分秒
+		String[] a = create_at.split("T");//截取出年月日和时分秒
 		String[] b = a[0].split("-");//截取年月日
-		String[] c = a[1].split(":");//截取时分秒
+		String[] c = a[1].split("Z");
+		String[] d = c[0].split(":");//截取时分秒
 		
 		int year = Integer.valueOf(b[0]);
 		int month = Integer.valueOf(b[1]);
 		int day = Integer.valueOf(b[2]);
-		int hourOfDay = Integer.valueOf(c[0]);
-		int minute = Integer.valueOf(c[1]);
-		int second = Integer.valueOf(c[2]);
+		int hourOfDay = Integer.valueOf(d[0]);
+		int minute = Integer.valueOf(d[1]);
+		int second = Integer.valueOf(d[2]);
 		
 		Calendar calendar_create_at = Calendar.getInstance();
 		//月份-1是因为calendar中保存的月份是从0开始的
@@ -1980,8 +1987,13 @@ BDLocationListener, SynthesizerPlayerListener {
 		Calendar calendar_now = Calendar.getInstance();
 		calendar_now.set(calendar_now.get(Calendar.YEAR), calendar_now.get(Calendar.MONTH), calendar_now.get(Calendar.DAY_OF_MONTH), calendar_now.get(Calendar.HOUR_OF_DAY), calendar_now.get(Calendar.MINUTE), calendar_now.get(Calendar.SECOND));
 		calendar_now.set(Calendar.MILLISECOND, 0);
-		countDownTime = calendar_create_at.compareTo(calendar_now);
-		Toast.makeText(context, ":"+countDownTime, Toast.LENGTH_SHORT).show();
+//		countDownTime = calendar_create_at.compareTo(calendar_now);
+		String count1 = String.format("%1$04d%2$02d%3$02d%4$02d%5$02d%6$02d", calendar_now.get(Calendar.YEAR),calendar_now.get(Calendar.MONTH),calendar_now.get(Calendar.DAY_OF_MONTH),calendar_now.get(Calendar.HOUR_OF_DAY),calendar_now.get(Calendar.MINUTE),calendar_now.get(Calendar.SECOND));
+		String count2 = String.format("%1$04d%2$02d%3$02d%4$02d%5$02d%6$02d", year,month,day,hourOfDay,minute,second);
+		countDownTime = Double.compare(Double.valueOf(count2), Double.valueOf(count1));
+		
+		MyToast toast = new MyToast(context,":"+countDownTime);
+		toast.startMyToast();
 		if(countDownTime>0){
 			return countDownTime;
 		}else{
@@ -2011,20 +2023,33 @@ BDLocationListener, SynthesizerPlayerListener {
 		linear_time.setVisibility(View.GONE);
 		linear_called.setVisibility(View.VISIBLE);
 		
-		//李吉喆加入，显示订单信息
-		for(int i = 0; i < tripsList.size();i++){
-			if(tripsList.get(i).getId() == conversationInfo.getId()){
-				starTextView.setText(tripsInfo.getStart());
-				endTextView.setText(tripsInfo.getEnd());
-				if (tripsInfo.getAppointment().equals(null)) {
-					money.setText(0);
-					distant.setText("不详");
-				} else {
-					money.setText(tripsInfo.getAppointment());
-					distant.setText(tripsInfo.getAppointment());
-				}
+		if(tripsInfo != null){
+			starTextView.setText(tripsInfo.getStart());
+			endTextView.setText(tripsInfo.getEnd());
+			if (tripsInfo.getAppointment().equals(null)) {
+				money.setText(0);
+				distant.setText("不详");
+			} else {
+				money.setText(tripsInfo.getAppointment());
+				distant.setText(tripsInfo.getAppointment());
 			}
 		}
+		
+		
+//		//李吉喆加入，显示订单信息
+//		for(int i = 0; i < tripsList.size();i++){
+//			if(tripsList.get(i).getId() == conversationInfo.getId()){
+//				starTextView.setText(tripsInfo.getStart());
+//				endTextView.setText(tripsInfo.getEnd());
+//				if (tripsInfo.getAppointment().equals(null)) {
+//					money.setText(0);
+//					distant.setText("不详");
+//				} else {
+//					money.setText(tripsInfo.getAppointment());
+//					distant.setText(tripsInfo.getAppointment());
+//				}
+//			}
+//		}
 		
 //		id = String.valueOf(conversationInfo.getId());
 //		changeConversationsStatus("1", id);
