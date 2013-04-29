@@ -32,6 +32,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.Log;
 
 import com.findcab.driver.handler.Ihandler;
 import com.findcab.mywidget.MyToast;
@@ -448,6 +449,7 @@ public class HttpTools {
 				HttpEntity httpEntity = httpResponse.getEntity();
 				InputStream ins = httpEntity.getContent();
 				Object resultMessage = ihandler.parseResponse(ins);
+				
 				return resultMessage;
 				 
 			}else{

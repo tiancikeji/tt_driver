@@ -21,8 +21,7 @@
         </activity>
         <activity
             android:name="com.findcab.driver.activity.PassengerActivity"
-            android:launchMode="singleInstance"
-            android:screenOrientation="landscape" >
+            android:launchMode="singleInstance" >
         </activity>
         <activity
             android:name="com.findcab.driver.activity.LocationOverlay"

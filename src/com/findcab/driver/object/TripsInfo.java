@@ -31,7 +31,8 @@ public class TripsInfo implements Serializable {
 	private String appointment;
 	private String updated_at;
 	private String created_at;
-
+	
+	
 	private int id;
 
 	public TripsInfo(JSONObject jObject) {
@@ -154,5 +155,5 @@ public class TripsInfo implements Serializable {
 	public void setAppointment(String appointment) {
 		this.appointment = appointment;
 	}
-
+	
 }

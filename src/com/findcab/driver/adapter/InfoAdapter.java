@@ -3,6 +3,8 @@ package com.findcab.driver.adapter;
 import java.util.List;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.findcab.R;
+import com.findcab.driver.object.ConversationInfo;
 import com.findcab.driver.object.TripsInfo;
+import com.findcab.driver.util.MyLogTools;
 
 public class InfoAdapter extends BaseAdapter {
-//	public List<ConversationInfo> list;
+	static final int MESSAGE_COUNTDOWN = 10001;//倒计时
+	
+	public List<ConversationInfo> listConversationInfo;
 	public List<TripsInfo> list;
 	public int mResource = R.layout.request_item;
 	public LayoutInflater mInflater;
@@ -35,6 +41,10 @@ public class InfoAdapter extends BaseAdapter {
 
 	}
 
+	public void setConversationsInfo(List<ConversationInfo> listConversationInfo){
+		this.listConversationInfo = listConversationInfo;
+	}
+	
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
@@ -56,28 +66,25 @@ public class InfoAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
-
 		if (convertView == null) {
-
 			convertView = mInflater.inflate(mResource, null);
-		
-			
 		}
 
 		final TripsInfo info = list.get(position);
-		TextView start =(TextView) convertView.findViewById(R.id.textstart1);
-		TextView end =(TextView) convertView.findViewById(R.id.textend1);
-		TextView money =(TextView) convertView.findViewById(R.id.textmoney1);
-		TextView time =(TextView) convertView.findViewById(R.id.texttime1);
+		TextView start =(TextView) convertView.findViewById(R.id.textview_start);
+		TextView end =(TextView) convertView.findViewById(R.id.textview_end);
+		TextView money =(TextView) convertView.findViewById(R.id.textview_money);
+		final TextView time =(TextView) convertView.findViewById(R.id.textview_time);
 		start.setText(info.getStart());
 		end.setText(info.getEnd());
-		money.setText(info.getAppointment());
-		time.setText(info.getUpdated_at());
-//		start.setText("ggggg");
-//		end.setText("ffffff");
-		//money.setText(info.get);
-
+		
+		money.setText(listConversationInfo.get(position).getDistance());
+//		money.setText(info.getAppointment());//新月版本money显示距离
+		time.setText(listConversationInfo.get(position).getCountDownTime()+"秒");
+//		time.setText(info.getUpdated_at());
+		
+		//启动倒计时
+		countBackwards(listConversationInfo.get(position),time);
 		return convertView;
 	}
 
@@ -92,4 +99,40 @@ public class InfoAdapter extends BaseAdapter {
 
 		notifyDataSetChanged();
 	}
+	
+	/**
+	 * 倒计时
+	 */
+	private void countBackwards(final ConversationInfo tempConversation,final TextView time) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (tempConversation.getCountDownTime() >= 0) {
+					// TODO Auto-generated method stub
+					try {
+						Thread.currentThread().sleep(1000);
+						tempConversation.setCountDownTime(tempConversation.getCountDownTime()-1);
+//						waitingHandler.sendMessage(MESSAGE_COUNTDOWN);
+						time.setText(tempConversation.getCountDownTime()+"秒");
+						handler.sendEmptyMessage(MESSAGE_COUNTDOWN);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();
+	}
+	
+	Handler handler = new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case MESSAGE_COUNTDOWN:
+					
+				break;
+			}
+		}
+		
+	};
 }

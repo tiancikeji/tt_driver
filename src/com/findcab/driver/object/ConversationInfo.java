@@ -21,7 +21,9 @@ public class ConversationInfo {
 	private int trip_id;
 	private String updated_at;
 	private int index;
-
+	private int countDownTime = 90;
+	private String distance = null;//司机到乘客距离距离
+	
 	private TripsInfo tripInfo = null;
 	
 	public ConversationInfo(JSONObject jObject) {
@@ -35,7 +37,7 @@ public class ConversationInfo {
 			status_desc = jObject.getString("status_desc");
 			to_id = jObject.getInt("to_id");
 			trip_id = jObject.getInt("trip_id");
-
+			distance = jObject.getString("distance");
 			updated_at = jObject.getString("updated_at");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -131,5 +133,23 @@ public class ConversationInfo {
 	public void setTripsInfo(TripsInfo tripsInfo){
 		this.tripInfo = tripsInfo;
 	}
+	
+	public void setCountDownTime(int count){
+		this.countDownTime = count;
+	}
+	
+	public int getCountDownTime(){
+		return countDownTime;
+	}
+	
+
+	public String getDistance(){
+		return distance;
+	}
+	
+	public void setDistance(String temp_destance){
+		this.distance = temp_destance;
+	}
+
 
 }

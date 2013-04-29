@@ -61,12 +61,12 @@
         android:id="@+id/linear_left"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/linear_leftnav"
         android:background="@drawable/info_background_b"
-        android:orientation="vertical" >
+        android:orientation="vertical" > <!-- android:layout_toRightOf="@+id/linear_leftnav" -->
+        <!-- 显示打车请求个数按钮，点击显示列表 -->
 
         <Button
-            android:id="@+id/btn_request"
+            android:id="@+id/btn_requestlist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -76,17 +76,20 @@
             android:textSize="18dp"
             android:visibility="visible" />
         <!-- android:text="3条新的打车请求" -->
+        <!-- 打车请求列表 -->
 
         <ListView
-            android:id="@+id/listView"
+            android:id="@+id/listView_request"
             android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:background="@color/gray"
             android:visibility="gone" />
 
+        <!-- 当前会话布局 -->
+
         <LinearLayout
-            android:id="@+id/linear"
+            android:id="@+id/linearlayout_conversation_info"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
@@ -95,6 +98,8 @@
             android:background="@drawable/info_background_s"
             android:orientation="vertical" >
 
+            <!-- 开始地址 -->
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,22 +107,23 @@
                 android:layout_marginTop="25dp" >
 
                 <ImageView
-                    android:id="@+id/imageViewstart"
+                    android:id="@+id/imageView_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/start" />
 
                 <TextView
-                    android:id="@+id/textstart"
+                    android:id="@+id/textview_start"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FFFFFF"
                     android:textSize="30dp" />
-                <!-- android:text="中关村南大街5号" -->
             </LinearLayout>
+
+            <!-- 结束地址 -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -126,22 +132,23 @@
                 android:layout_marginTop="15dp" >
 
                 <ImageView
-                    android:id="@+id/imageViewend"
+                    android:id="@+id/imageView_end"
                     android:layout_width="27dp"
                     android:layout_height="29dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/end" />
 
                 <TextView
-                    android:id="@+id/textend"
+                    android:id="@+id/textview_end"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="10dp"
                     android:textColor="#FFFFFF"
                     android:textSize="30dp" />
-                <!-- android:text="清华大学" -->
             </LinearLayout>
+
+            <!-- 距离 -->
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -150,14 +157,14 @@
                 android:layout_marginTop="15dp" >
 
                 <ImageView
-                    android:id="@+id/imageViewdistend"
+                    android:id="@+id/imageView_distence"
                     android:layout_width="27dp"
                     android:layout_height="29dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/distant" />
+                    android:src="@drawable/distance" />
 
                 <TextView
-                    android:id="@+id/textdistant"
+                    android:id="@+id/textview_distance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -165,9 +172,10 @@
                     android:textColor="#FFFFFF"
                     android:textSize="36dp"
                     android:textStyle="bold" />
+                <!-- 公里 -->
 
                 <TextView
-                    android:id="@+id/textViewwenzi1"
+                    android:id="@+id/textview_distance_km"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -178,21 +186,24 @@
                     android:textSize="18dp" />
             </LinearLayout>
 
+            <!-- 加价 -->
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="15dp" >
+                android:layout_marginTop="15dp"
+                android:visibility="gone" >
 
                 <ImageView
-                    android:id="@+id/imageViewmoney"
+                    android:id="@+id/imageView_money"
                     android:layout_width="27dp"
                     android:layout_height="29dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/money" />
 
                 <TextView
-                    android:id="@+id/textmoney"
+                    android:id="@+id/textview_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -202,7 +213,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewwenzi2"
+                    android:id="@+id/textview_money_rmb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -214,7 +225,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_time"
+                android:id="@+id/linearlayout_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -222,14 +233,14 @@
                 android:visibility="visible" >
 
                 <ImageView
-                    android:id="@+id/imageViewtime"
+                    android:id="@+id/imageView_time"
                     android:layout_width="27dp"
                     android:layout_height="29dp"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/time" />
 
                 <TextView
-                    android:id="@+id/texttime"
+                    android:id="@+id/textview_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -240,7 +251,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textViewwenzi3"
+                    android:id="@+id/textView_time_second"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -251,8 +262,10 @@
                     android:textSize="18dp" />
             </LinearLayout>
 
+            <!-- 应答 -->
+
             <Button
-                android:id="@+id/btn_call"
+                android:id="@+id/button_response"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center_horizontal"
@@ -261,11 +274,10 @@
                 android:background="@drawable/bt_answer"
                 android:text="应答"
                 android:textColor="#FFFFFF"
-                android:textSize="36dp"
-                />
+                android:textSize="36dp" />
 
             <LinearLayout
-                android:id="@+id/linear_called"
+                android:id="@+id/linearlayout_response_after"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -275,7 +287,7 @@
                 android:visibility="gone" >
 
                 <Button
-                    android:id="@+id/linear_btcalled"
+                    android:id="@+id/button_callphone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bt_call"
@@ -284,7 +296,7 @@
                     android:textSize="36dp" />
 
                 <Button
-                    android:id="@+id/linear_already"
+                    android:id="@+id/button_passengergeton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -304,8 +316,9 @@
         android:layout_toRightOf="@+id/linear_left"
         android:clickable="true" />
 
+    <!-- 浮层上的按钮，刷新设置路况 -->
+
     <LinearLayout
-        android:id="@+id/linear_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -337,7 +350,7 @@
     <!-- 预约界面 -->
 
     <LinearLayout
-        android:id="@+id/linear_oppointment_middle"
+        android:id="@+id/linearlayout_oppointment_middle"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toRightOf="@+id/linear_leftnav"

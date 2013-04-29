@@ -492,45 +492,45 @@ public class MainMapActivity extends Activity implements OnClickListener,BDLocat
 	 * 初始化控件
 	 */
 	private void initView(){
-		mMapView = (MapView) findViewById(R.id.bmapView);
-		linear_left = (LinearLayout) findViewById(R.id.linear_left);
-		btn_call = (Button) findViewById(R.id.btn_call);
-		btn_call.setOnClickListener(this);
-
-		button_requestList = (Button) findViewById(R.id.btn_request);
-		button_requestList.setOnClickListener(this);
-		button_requestList.setText(R.string.noask);
-		button_refurbish = (Button) findViewById(R.id.btn_refurbish);
-		button_refurbish.setOnClickListener(this);
-		button_road = (Button) findViewById(R.id.btn_road);
-		button_road.setOnClickListener(this);
-
-		linear_called = (LinearLayout) findViewById(R.id.linear_called);
-		linear_already = (Button) findViewById(R.id.linear_already);
-		linear_call = (Button) findViewById(R.id.linear_btcalled);
-		linear_call.setOnClickListener(this);
-		linear_already.setOnClickListener(this);
-		linear = (LinearLayout) findViewById(R.id.linear);
-		listView = (ListView) findViewById(R.id.listView);
-
-		//显示当前会话控件
-		imageView_startAddress=(ImageView)findViewById(R.id.imageViewstart);
-		imageView_endAddress=(ImageView)findViewById(R.id.imageViewend);
-		imageView_distend=(ImageView)findViewById(R.id.imageViewdistend);
-		imageView_money=(ImageView)findViewById(R.id.imageViewmoney);
-		imageView_money.setVisibility(View.INVISIBLE);
-		imageView_time=(ImageView)findViewById(R.id.imageViewtime);
-		textview_1=(TextView)findViewById(R.id.textViewwenzi1);
-		textview_1.setVisibility(View.INVISIBLE);
-		textview_2=(TextView)findViewById(R.id.textViewwenzi2);
-		textview_3=(TextView)findViewById(R.id.textViewwenzi3);
-		linear_time = (LinearLayout) findViewById(R.id.linear_time);
-		textview_startAddress = (TextView) findViewById(R.id.textstart);
-		textview_endAddress = (TextView) findViewById(R.id.textend);
-		textview_money = (TextView) findViewById(R.id.textmoney);
-		textview_money.setVisibility(View.INVISIBLE);
-		textview_distant = (TextView) findViewById(R.id.textdistant);
-		textview_time = (TextView) findViewById(R.id.texttime);
+//		mMapView = (MapView) findViewById(R.id.bmapView);
+//		linear_left = (LinearLayout) findViewById(R.id.linear_left);
+//		btn_call = (Button) findViewById(R.id.btn_call);
+//		btn_call.setOnClickListener(this);
+//
+//		button_requestList = (Button) findViewById(R.id.btn_request);
+//		button_requestList.setOnClickListener(this);
+//		button_requestList.setText(R.string.noask);
+//		button_refurbish = (Button) findViewById(R.id.btn_refurbish);
+//		button_refurbish.setOnClickListener(this);
+//		button_road = (Button) findViewById(R.id.btn_road);
+//		button_road.setOnClickListener(this);
+//
+//		linear_called = (LinearLayout) findViewById(R.id.linear_called);
+//		linear_already = (Button) findViewById(R.id.linear_already);
+//		linear_call = (Button) findViewById(R.id.linear_btcalled);
+//		linear_call.setOnClickListener(this);
+//		linear_already.setOnClickListener(this);
+//		linear = (LinearLayout) findViewById(R.id.linear);
+//		listView = (ListView) findViewById(R.id.listView);
+//
+//		//显示当前会话控件
+//		imageView_startAddress=(ImageView)findViewById(R.id.imageViewstart);
+//		imageView_endAddress=(ImageView)findViewById(R.id.imageViewend);
+//		imageView_distend=(ImageView)findViewById(R.id.imageViewdistend);
+//		imageView_money=(ImageView)findViewById(R.id.imageViewmoney);
+//		imageView_money.setVisibility(View.INVISIBLE);
+//		imageView_time=(ImageView)findViewById(R.id.imageViewtime);
+//		textview_1=(TextView)findViewById(R.id.textViewwenzi1);
+//		textview_1.setVisibility(View.INVISIBLE);
+//		textview_2=(TextView)findViewById(R.id.textViewwenzi2);
+//		textview_3=(TextView)findViewById(R.id.textViewwenzi3);
+//		linear_time = (LinearLayout) findViewById(R.id.linear_time);
+//		textview_startAddress = (TextView) findViewById(R.id.textstart);
+//		textview_endAddress = (TextView) findViewById(R.id.textend);
+//		textview_money = (TextView) findViewById(R.id.textmoney);
+//		textview_money.setVisibility(View.INVISIBLE);
+//		textview_distant = (TextView) findViewById(R.id.textdistant);
+//		textview_time = (TextView) findViewById(R.id.texttime);
 
 		//地图
 		mMapView.setDoubleClickZooming(false);
@@ -1379,234 +1379,234 @@ public class MainMapActivity extends Activity implements OnClickListener,BDLocat
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onClick(View v) {
-		switch(v.getId()){
-		case R.id.linear_btcalled:{
-			String moble = null;
-
-			if (listPassengerInfo != null) {
-
-				for (int i = 0; i < listPassengerInfo.size(); i++) {
-
-					if (listPassengerInfo.get(i).getId() == nowConversationInfo
-							.getFrom_id()) {
-						moble = listPassengerInfo.get(i).getMobile();
-					}
-
-				}
-				changeConversationsStatus("4", String.valueOf(nowConversationInfo.getId()));
-
-				TelephonyManager tm = (TelephonyManager) getBaseContext()
-				.getSystemService(Context.TELEPHONY_SERVICE);
-				if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
-					Intent intent = new Intent(Intent.ACTION_CALL,
-							Uri.parse("tel:" + moble));
-
-					startActivity(intent);
-
-				} else {
-					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT)
-					.show();
-				}
-			}
-		}
-		break;
-		case R.id.linear_already: {
-			// 乘客以上车
-			
-			String temp_id = String.valueOf(nowConversationInfo.getId());
-			changeConversationsStatus("4", temp_id);//4代表乘客以上车
-			nowConversationInfo.setStatus(4);
-			nowConversationInfo = null;
-			
-			isAnswer = false;
-			
-			for (int i = 0; i < listConversationInfo.size(); i++) {
-				if (listConversationInfo.get(i).getStatus() != 0)
-					listConversationInfo.remove(i);
-			}
-			
-			//删除已关闭会话，当前会话重新赋值
-			if(listConversationInfo.size()>0){
-				nowConversationInfo = listConversationInfo.get(listConversationInfo.size()-1);
-			}
-//			for(int i = 0; i< tripsList.size();i++){
-//				if(tripsList.get(i).getId() == nowConversationInfo.getId()){
-//					nowTripsInfo = tripsList.get(i);
+//		switch(v.getId()){
+//		case R.id.linear_btcalled:{
+//			String moble = null;
+//
+//			if (listPassengerInfo != null) {
+//
+//				for (int i = 0; i < listPassengerInfo.size(); i++) {
+//
+//					if (listPassengerInfo.get(i).getId() == nowConversationInfo
+//							.getFrom_id()) {
+//						moble = listPassengerInfo.get(i).getMobile();
+//					}
+//
+//				}
+//				changeConversationsStatus("4", String.valueOf(nowConversationInfo.getId()));
+//
+//				TelephonyManager tm = (TelephonyManager) getBaseContext()
+//				.getSystemService(Context.TELEPHONY_SERVICE);
+//				if (tm.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
+//					Intent intent = new Intent(Intent.ACTION_CALL,
+//							Uri.parse("tel:" + moble));
+//
+//					startActivity(intent);
+//
+//				} else {
+//					Toast.makeText(context, "SIM卡没有或读取有误！", Toast.LENGTH_SHORT)
+//					.show();
 //				}
 //			}
-			
-			button_requestList.setVisibility(View.VISIBLE);
-			button_requestList.setText(listConversationInfo.size() + "条新的未读打车请求");
-			btn_call.setVisibility(View.VISIBLE);
-			linear_time.setVisibility(View.VISIBLE);
-			linear_called.setVisibility(View.GONE);
-			tripsList.clear();
-			isWaiting = false;
-			
-			getConversations();
-			
-			showNowConversationView();
-			
-			InfoAdapter adapter = new InfoAdapter(context, tripsList);
-			tripsList.size();
-			adapter.upDatas(tripsList);
-			listView.setAdapter(adapter);
-		}
-		break;
-		case R.id.btn_call:{
-			//应答
-			for (int i = 0; i < listConversationInfo.size(); i++) {
-				if (listConversationInfo.get(i).getStatus() != 0)
-					listConversationInfo.remove(i);
-
-			}
-			ConversationInfo conversationInfo1 = null;
-			String temp_map = "[to_id=" + String.valueOf(ownerInfo.getId()) + "]";
-
-			listConversationInfo = (List<ConversationInfo>) HttpTools.getAndParse(
-					Constant.CONVERSATIONS, temp_map, new ConversationsHandler());
-
-			int biaozhi = 1;
-			if (listConversationInfo.size() > 0) {
-				for (int i = 0; i < listConversationInfo.size(); i++) {
-					conversationInfo1 = listConversationInfo.get(i);
-
-					if (conversationInfo1.getFrom_id() == nowConversationInfo.getFrom_id()) {
-						biaozhi = 0;
-						if (conversationInfo1.getStatus() == 0) {
-							
-							changeConversationsStatus("1", String.valueOf(conversationInfo1.getId()));
-							conversationInfo1.setStatus(1);
-							nowConversationInfo=conversationInfo1;
-							
-//							getTrip(conversationInfo1.getId());//当应答后，从新获取路线信息
-							
-							showCalledView();
-							
-							isWaiting = false;
-							waitingTime = 60;
-							// ispassengersrun=false;
-							// isRun=false;
-							synthetizeInSilence("应答成功，请尽快联系乘客");
-//							isMyconversationRun=true;
-							break;
-						} else if (conversationInfo1.getStatus() == -1) {
-							isWaiting = false;
-							synthetizeInSilence("订单已经取消");
-							tripsList.clear();
-							nowConversationInfo = null;
-							getNearThePassengers();
-							getConversations();
-							break;
-						} else {
-							isWaiting = false;
-							synthetizeInSilence("订单已经被抢");
-							break;
-						}
-
-					}
-
-				}
-				if (biaozhi == 1) {
-					isWaiting = false;
-					synthetizeInSilence("订单已经取消");
-					// isStartCount = true;
-					tripsList.clear();
-//					countbiao=0;
-					getNearThePassengers();
-					getConversations();
-				}
-
-			} else {
-				isWaiting = false;
-				synthetizeInSilence("订单已经取消");
-				// isStartCount = true;
-				tripsList.clear();
-//				countbiao=0;
-				getNearThePassengers();
-				getConversations();
-			}
-			
-		}
-		break;
-		case R.id.btn_request:
-			showPassengerListView();
-			break;
-		case R.id.btn_refurbish:{
-			tripsList.clear();
-			mGeoList.clear();
-			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
-			"item1");
-			Drawable maker = getResources().getDrawable(R.drawable.car);
-			item.setMarker(maker);
-			mGeoList.add(item);
-
-			MyItemizedOverlay overlay = new MyItemizedOverlay(context, maker,
-					mGeoList);
-
-			List<Overlay> list = mMapView.getOverlays();
-			if (list != null && list.size() > 0) {
-				list.remove(0);
-			}
-			mMapView.getOverlays().add(0, overlay);
-			mapController.animateTo(new GeoPoint(lat, lng), null);
-			mMapView.refresh();
-			getNearThePassengers();
-			getConversations();
-			mapController.animateTo(new GeoPoint(lat, lng), null);
-			mMapView.refresh();
-		}
-		break;
-		case R.id.btn_road:{
-			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
-			"item1");
-			Drawable maker = getResources().getDrawable(R.drawable.car);
-			item.setMarker(maker);
-			mGeoList.add(item);
-
-			MyItemizedOverlay overlay = new MyItemizedOverlay(context, maker,
-					mGeoList);
-			List<Overlay> list = mMapView.getOverlays();
-			if (list != null && list.size() > 0) {
-				list.remove(0);
-			}
-			mMapView.getOverlays().add(0, overlay);
-			mapController.animateTo(new GeoPoint(lat, lng), null);
-			mMapView.refresh();
-			getNearThePassengers();
-			getConversations();
-			mapController.animateTo(new GeoPoint(lat, lng), null);
-			mMapView.refresh();
-			setPassengerGeoPointsView();
-			if (!isShowRoad) {
-				isShowRoad = true;
-				mMapView.setTraffic(true);
-				mMapView.refresh();
-			} else {
-				isShowRoad = false;
-				mMapView.setTraffic(false);
-				mMapView.refresh();
-
-			}
-		}
-		break;
-		case R.id.linear_leftnav_appointment:
-			AppointAdapter adapter1 = new AppointAdapter(context, tripsList);
-			tripsList.size();
-			adapter1.upDatas(tripsList);
-			linear_oppointment_listview.setAdapter(adapter1);
-			linear_left.setVisibility(View.GONE);
-			mMapView.setVisibility(View.GONE);
-			linear_oppointment.setVisibility(View.VISIBLE);
-			linear_oppointment_right.setVisibility(View.VISIBLE);
-			break;
-		case R.id.linear_leftnav_main:
-			linear_left.setVisibility(View.VISIBLE);
-			mMapView.setVisibility(View.VISIBLE);
-			linear_oppointment.setVisibility(View.GONE);
-			linear_oppointment_right.setVisibility(View.GONE);
-			break;
-		}
+//		}
+//		break;
+//		case R.id.linear_already: {
+//			// 乘客以上车
+//			
+//			String temp_id = String.valueOf(nowConversationInfo.getId());
+//			changeConversationsStatus("4", temp_id);//4代表乘客以上车
+//			nowConversationInfo.setStatus(4);
+//			nowConversationInfo = null;
+//			
+//			isAnswer = false;
+//			
+//			for (int i = 0; i < listConversationInfo.size(); i++) {
+//				if (listConversationInfo.get(i).getStatus() != 0)
+//					listConversationInfo.remove(i);
+//			}
+//			
+//			//删除已关闭会话，当前会话重新赋值
+//			if(listConversationInfo.size()>0){
+//				nowConversationInfo = listConversationInfo.get(listConversationInfo.size()-1);
+//			}
+////			for(int i = 0; i< tripsList.size();i++){
+////				if(tripsList.get(i).getId() == nowConversationInfo.getId()){
+////					nowTripsInfo = tripsList.get(i);
+////				}
+////			}
+//			
+//			button_requestList.setVisibility(View.VISIBLE);
+//			button_requestList.setText(listConversationInfo.size() + "条新的未读打车请求");
+//			btn_call.setVisibility(View.VISIBLE);
+//			linear_time.setVisibility(View.VISIBLE);
+//			linear_called.setVisibility(View.GONE);
+//			tripsList.clear();
+//			isWaiting = false;
+//			
+//			getConversations();
+//			
+//			showNowConversationView();
+//			
+//			InfoAdapter adapter = new InfoAdapter(context, tripsList);
+//			tripsList.size();
+//			adapter.upDatas(tripsList);
+//			listView.setAdapter(adapter);
+//		}
+//		break;
+//		case R.id.btn_call:{
+//			//应答
+//			for (int i = 0; i < listConversationInfo.size(); i++) {
+//				if (listConversationInfo.get(i).getStatus() != 0)
+//					listConversationInfo.remove(i);
+//
+//			}
+//			ConversationInfo conversationInfo1 = null;
+//			String temp_map = "[to_id=" + String.valueOf(ownerInfo.getId()) + "]";
+//
+//			listConversationInfo = (List<ConversationInfo>) HttpTools.getAndParse(
+//					Constant.CONVERSATIONS, temp_map, new ConversationsHandler());
+//
+//			int biaozhi = 1;
+//			if (listConversationInfo.size() > 0) {
+//				for (int i = 0; i < listConversationInfo.size(); i++) {
+//					conversationInfo1 = listConversationInfo.get(i);
+//
+//					if (conversationInfo1.getFrom_id() == nowConversationInfo.getFrom_id()) {
+//						biaozhi = 0;
+//						if (conversationInfo1.getStatus() == 0) {
+//							
+//							changeConversationsStatus("1", String.valueOf(conversationInfo1.getId()));
+//							conversationInfo1.setStatus(1);
+//							nowConversationInfo=conversationInfo1;
+//							
+////							getTrip(conversationInfo1.getId());//当应答后，从新获取路线信息
+//							
+//							showCalledView();
+//							
+//							isWaiting = false;
+//							waitingTime = 60;
+//							// ispassengersrun=false;
+//							// isRun=false;
+//							synthetizeInSilence("应答成功，请尽快联系乘客");
+////							isMyconversationRun=true;
+//							break;
+//						} else if (conversationInfo1.getStatus() == -1) {
+//							isWaiting = false;
+//							synthetizeInSilence("订单已经取消");
+//							tripsList.clear();
+//							nowConversationInfo = null;
+//							getNearThePassengers();
+//							getConversations();
+//							break;
+//						} else {
+//							isWaiting = false;
+//							synthetizeInSilence("订单已经被抢");
+//							break;
+//						}
+//
+//					}
+//
+//				}
+//				if (biaozhi == 1) {
+//					isWaiting = false;
+//					synthetizeInSilence("订单已经取消");
+//					// isStartCount = true;
+//					tripsList.clear();
+////					countbiao=0;
+//					getNearThePassengers();
+//					getConversations();
+//				}
+//
+//			} else {
+//				isWaiting = false;
+//				synthetizeInSilence("订单已经取消");
+//				// isStartCount = true;
+//				tripsList.clear();
+////				countbiao=0;
+//				getNearThePassengers();
+//				getConversations();
+//			}
+//			
+//		}
+//		break;
+//		case R.id.btn_request:
+//			showPassengerListView();
+//			break;
+//		case R.id.btn_refurbish:{
+//			tripsList.clear();
+//			mGeoList.clear();
+//			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
+//			"item1");
+//			Drawable maker = getResources().getDrawable(R.drawable.car);
+//			item.setMarker(maker);
+//			mGeoList.add(item);
+//
+//			MyItemizedOverlay overlay = new MyItemizedOverlay(context, maker,
+//					mGeoList);
+//
+//			List<Overlay> list = mMapView.getOverlays();
+//			if (list != null && list.size() > 0) {
+//				list.remove(0);
+//			}
+//			mMapView.getOverlays().add(0, overlay);
+//			mapController.animateTo(new GeoPoint(lat, lng), null);
+//			mMapView.refresh();
+//			getNearThePassengers();
+//			getConversations();
+//			mapController.animateTo(new GeoPoint(lat, lng), null);
+//			mMapView.refresh();
+//		}
+//		break;
+//		case R.id.btn_road:{
+//			OverlayItem item = new OverlayItem(new GeoPoint(lat, lng), "item1",
+//			"item1");
+//			Drawable maker = getResources().getDrawable(R.drawable.car);
+//			item.setMarker(maker);
+//			mGeoList.add(item);
+//
+//			MyItemizedOverlay overlay = new MyItemizedOverlay(context, maker,
+//					mGeoList);
+//			List<Overlay> list = mMapView.getOverlays();
+//			if (list != null && list.size() > 0) {
+//				list.remove(0);
+//			}
+//			mMapView.getOverlays().add(0, overlay);
+//			mapController.animateTo(new GeoPoint(lat, lng), null);
+//			mMapView.refresh();
+//			getNearThePassengers();
+//			getConversations();
+//			mapController.animateTo(new GeoPoint(lat, lng), null);
+//			mMapView.refresh();
+//			setPassengerGeoPointsView();
+//			if (!isShowRoad) {
+//				isShowRoad = true;
+//				mMapView.setTraffic(true);
+//				mMapView.refresh();
+//			} else {
+//				isShowRoad = false;
+//				mMapView.setTraffic(false);
+//				mMapView.refresh();
+//
+//			}
+//		}
+//		break;
+//		case R.id.linear_leftnav_appointment:
+//			AppointAdapter adapter1 = new AppointAdapter(context, tripsList);
+//			tripsList.size();
+//			adapter1.upDatas(tripsList);
+//			linear_oppointment_listview.setAdapter(adapter1);
+//			linear_left.setVisibility(View.GONE);
+//			mMapView.setVisibility(View.GONE);
+//			linear_oppointment.setVisibility(View.VISIBLE);
+//			linear_oppointment_right.setVisibility(View.VISIBLE);
+//			break;
+//		case R.id.linear_leftnav_main:
+//			linear_left.setVisibility(View.VISIBLE);
+//			mMapView.setVisibility(View.VISIBLE);
+//			linear_oppointment.setVisibility(View.GONE);
+//			linear_oppointment_right.setVisibility(View.GONE);
+//			break;
+//		}
 
 	}
 

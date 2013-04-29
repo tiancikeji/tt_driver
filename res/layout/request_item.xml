@@ -15,14 +15,14 @@
         android:layout_marginTop="25dp" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/imageView_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:src="@drawable/start" />
 
         <TextView
-            android:id="@+id/textstart1"
+            android:id="@+id/textview_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -38,14 +38,14 @@
         android:layout_marginTop="15dp" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/imageView_end"
             android:layout_width="27dp"
             android:layout_height="29dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/end" />
 
         <TextView
-            android:id="@+id/textend1"
+            android:id="@+id/textview_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -65,14 +65,14 @@
             android:layout_marginTop="15dp" >
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/imageView_money"
                 android:layout_width="27dp"
                 android:layout_height="29dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/money" />
 
             <TextView
-                android:id="@+id/textmoney1"
+                android:id="@+id/textview_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -81,8 +81,8 @@
                 android:textSize="36dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView1"
+            <!-- <TextView
+                android:id="@+id/textview_yuan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -90,7 +90,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="元"
                 android:textColor="#FFFFFF"
-                android:textSize="18dp" />
+                android:textSize="18dp" /> -->
         </LinearLayout>
 
         <LinearLayout
@@ -100,14 +100,14 @@
             android:layout_marginTop="15dp" >
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/imageView_time"
                 android:layout_width="27dp"
                 android:layout_height="29dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/time" />
 
             <TextView
-                android:id="@+id/texttime1"
+                android:id="@+id/textview_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -116,8 +116,8 @@
                 android:textSize="36dp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/textView1"
+           <!--  <TextView
+                android:id="@+id/textview_miao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
@@ -125,7 +125,7 @@
                 android:layout_marginLeft="10dp"
                 android:text="秒"
                 android:textColor="#FFFFFF"
-                android:textSize="18dp" />
+                android:textSize="18dp" /> -->
         </LinearLayout>
     </LinearLayout>
 
